@@ -1,0 +1,119 @@
+\documentclass[12pt,a4paper]{report}
+
+% Paquetes para el manejo de la lengua y la codificación de los caracteres
+\usepackage[spanish]{babel} % Para tener los elementos de texto en español
+\usepackage[T1]{fontenc} % Set the font (output) encodings for español
+
+% Paquetes para el manejo de gráficos e imágenes
+\usepackage{graphicx} % Mejoras sobre el paquete graphics
+\graphicspath{ {imagenes/} } % carpeta en la que va a buscar por imágenes
+
+% Paquetes para el manejo de matemáticas
+\usepackage{amsmath} % para poner flechas dentro del código
+
+% Paquetes para el manejo de la geometría del documento y la justificación del texto
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry} % para la portada. REVISAR QUE HACE
+\usepackage[protrusion=false, expansion=true]{microtype} % mejora la justificación del documento
+
+% Paquetes para el manejo de hipervínculos
+\usepackage[pdfpagelabels,colorlinks=true, allcolors=black]{hyperref} %pone los links en negro
+
+% Paquetes para el manejo de la bibliografía
+\usepackage[style=ieee]{biblatex}
+\usepackage{csquotes} % Facilitar el trabajo con citas
+\addbibresource{export.bib}
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburllcpenalty}{9000} 
+\setcounter{biburlucpenalty}{9000} 
+
+\addto\extrasspanish{
+    \def\sectionautorefname{Apartado}
+    \def\subsectionautorefname{Apartado}
+}
+
+% Paquetes para el manejo de código fuente
+\usepackage{listingsutf8}
+\usepackage{pxfonts,fix-cm}
+\usepackage{accsupp} % Para poder poner los número en el código y que no se copien al seleccionar el código
+\usepackage{xcolor}
+\newcommand{\noncopynumber}[1]{%
+    \BeginAccSupp{method=escape,ActualText={}}%
+    #1%
+    \EndAccSupp{}%
+}
+
+% Configuración de la presentación del código
+\definecolor{sviolet}{HTML}{6C71C4}
+\definecolor{sbase1}{HTML}{93A1A1}
+\definecolor{sblue}{HTML}{268BD2}
+\definecolor{scyan}{HTML}{2AA198}
+\definecolor{sbase00}{HTML}{657B83}
+\lstset{
+    inputencoding=utf8/latin1,
+    language=Java, 
+    columns=fullflexible, % si lo comentas queda algo mas bonito
+    keepspaces=true, % si lo comentas queda algo mas bonito
+    sensitive=true,
+    aboveskip=\baselineskip,
+    belowskip=\baselineskip,
+    frame=lines,
+    xleftmargin=\parindent,
+    belowcaptionskip=1\baselineskip,
+    basicstyle=\color{sbase00}\ttfamily,
+    keywordstyle=\color{scyan},
+    commentstyle=\color{sbase1},
+    stringstyle=\color{sblue},
+    numberstyle=\color{sviolet},
+    identifierstyle=\color{sbase00},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+\lstdefinestyle{mystyle}{
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    columns=fullflexible,
+    frame=single,
+    captionpos=b,
+    keepspaces=true,
+    showspaces=false,
+    showstringspaces=false,
+    numberstyle=\tiny,
+    numbers=left,
+    stepnumber=1,
+    numbersep=5pt
+}
+
+% Paquetes para el manejo de la disposición de los elementos en la página
+\usepackage{float} % Para centrar las imágenes 
+\usepackage{parskip} % si no pones esto, el titulo de la portada sale mal
+% \usepackage[all]{hypcap} % Ajusta los enlaces para que apunten a la parte superior de las figuras y tablas
+\usepackage[hypcap=true]{caption} % hypcap esta desactualizado
+\usepackage{chngcntr} % Desvincula el contador de las figuras del contador de las secciones
+\counterwithout{figure}{chapter} % para que la numeración de las figuras no siga la de la sección en la que esta
+\usepackage{awesomebox} % Bloques de texto más molones
+\setlength{\parskip}{0pt} % definimos la separación entre párrafos
+\setlength{\parindent}{20pt} % definimos la identación de los párrafos
+
+% Paquetes para la creación de la portada
+\usepackage{tikz} % para crear gráficos y figuras mas complejos. figura azul de portada
+\usepackage{changepage} % para editar margenes y otras dimensiones de la pagina
+\usepackage{afterpage}% for "\afterpage"
+
+\definecolor{color_29791}{rgb}{0,0,0} % color para la figura de la portada
+\definecolor{color_104998}{rgb}{0.290196,0.494118,0.733333} % color para la figura de la portada
+\definecolor{AzulCeleste}{RGB}{31, 130, 192} % para la portada
+
+
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+
+% Paquetes deshabilitados
+% \usepackage{pict2e} % mejora del paquete picture. Para cosas mas complejas usar tikz
+% \usepackage{wasysym} % da conflictos con amsmath
+% \usepackage{latexsym} 
+% \usepackage[utf8]{inputenc} % ya no hace falta desde 2018
+% \usepackage{pdfpages} % Para insertar pdf en el documento
+% \usepackage[none]{hyphenat} %evitamos que rompa las palabras

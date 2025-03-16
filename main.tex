@@ -1,0 +1,95 @@
+\input{conf.tex}
+% Comando para escribir PFG
+\newcommand{\pfg}{Proyecto Fin de Grado }
+
+\title{Sistema multiplataforma en Rust para Análisis 3D 
+Biomecánico con Motion Capture}
+\author{Rubén Agustín González}
+
+\begin{document}
+
+% Primera hoja (obligatorio)
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+    \thispagestyle{empty}
+    \input{capitulos/portada}
+\end{titlepage}
+\pagenumbering{Roman}
+
+\newpage
+% Resumen (obligatorio)
+\begin{abstract}
+    \input{capitulos/abstract-español.tex}
+\end{abstract}
+\renewcommand{\abstractname}{Abstract} % para poner el nombre que queramos
+\newpage
+% Abstract (obligatorio)
+\vspace{10cm}
+\begin{abstract}
+    \input{capitulos/abstract-ingles.tex}
+\end{abstract}
+
+% Agradecimientos
+\chapter*{Agradecimientos}
+\noindent Añade aqui tus agradecimientos...
+
+% Índice de figuras
+\listoffigures
+
+% Lista de acrónimos
+
+% Índice de contenidos (obligatorio)
+\hypersetup{pageanchor=false}
+\hypersetup{linkcolor=black}
+\tableofcontents
+
+% Contenidos
+\pagenumbering{arabic} % cambiamos la numeración de las páginas
+
+\chapter{Introducción}
+\label{sec:cap1}
+\input{capitulos/introduccion}
+
+\chapter{Estado del arte}
+\label{sec:cap2}
+\input{capitulos/cap2-estadodelarte.tex}
+
+\chapter{Desarrollo}
+\label{sec:cap3}
+\input{capitulos/cap3-desarrollo.tex}
+
+% PRESUPUESTO (obligatorio)
+\chapter{Presupuesto}
+\label{sec:cap4}
+\input{capitulos/presupuesto}
+
+% Impacto del proyecto (obligatorio)
+\chapter{Impacto del proyecto}
+\label{sec:cap5}
+\input{capitulos/impactodelproyecto}
+
+% Conclusiones (obligatorio)
+\chapter{Conclusiones y trabajo futuro}
+\label{sec:cap6}
+\input{capitulos/conclusiones}
+
+% Referencias (obligatorio)
+% \nocite{nombre-de-referencia}
+% \nocite{javaccgithub}
+%  añade aqui referencias que no se citen directamente...
+
+\label{sec:bibliografía}
+\printbibliography
+
+% Anexo (obligatorio)
+\appendix
+\label{sec:apendice}
+\chapter{Preguntas Frecuentes}
+\input{capitulos/preguntasfrecuentes}
+\chapter{Herramientas utilizadas}
+\input{capitulos/herramientas}
+\chapter{Código Fuente}
+\label{sec:codigofuente}
+\input{capitulos/codigofuente}
+
+\end{document}
