@@ -1,10 +1,27 @@
+\chapter{Estado del arte} \label{sec:cap2}
+
 \noindent El estudio del movimiento del cuerpo humano es una tarea compleja, que requiere de amplios conocimientos en el sector de la biomecánica, y herramientas específicas para su análisis. En este sentido, el sistema de captura de movimiento, conocido como \textit{Motion Capture} (MoCap), es una herramienta fundamental para el estudio del movimiento humano \autocite{taiQueEsMotion2024}.
 
-El \textit{Motion Capture} es una técnica que permite capturar el movimiento de un objeto en tiempo real, y representarlo en un entorno virtual. Esta técnica se utiliza en diferentes campos, como la animación, la medicina, la biomecánica o la robótica; y se basa en la captura de la posición de diferentes marcadores en el espacio. Para lograr la captura, existen diferentes tecnologías, como cámaras de vídeo, sensores inerciales, sensores de ultrasonidos, etc. \autocite{taiQueEsMotion2024}
 
-En la facultad de INEF de la UPM, se utiliza un sistema de Motion Capture basado en cámaras de infrarrojo, que utilizan para capturar movimientos deportivos\footnote{La facultad de INEF cuenta con 6 cámaras infrarrojas de la marca Vicon, capaces de capturar fotogramas a una frecuencia de hasta 500 Hz \autocite{FacultadCienciasActividad}}. Estos marcadores se colocan en diferentes partes del cuerpo del deportista, logrando capturar un movimiento preciso. Los datos capturados se almacenan en un fichero en formato C3D, que contiene la información necesaria para la representación del movimiento.
+\section{Sistemas \textit{Motion Capture}}
+\noindent El \textit{Motion Capture} es una técnica que permite capturar el movimiento de un objeto en tiempo real, y representarlo en un entorno virtual. Esta técnica se utiliza en diferentes campos, como la animación, la medicina, la biomecánica o la robótica; y se basa en la captura de la posición de diferentes marcadores en el espacio. Para lograr la captura, existen diferentes tecnologías, como cámaras de vídeo, sensores inerciales, sensores de ultrasonidos, etc. \autocite{taiQueEsMotion2024}
+
+\subsection{\textit{Hardware} disponible}
+\noindent En la facultad de INEF de la UPM, se utiliza un sistema de Motion Capture basado en cámaras de infrarrojo, que utilizan para capturar movimientos deportivos\footnote{La facultad de INEF cuenta con 6 cámaras infrarrojas de la marca Vicon, capaces de capturar fotogramas a una frecuencia de hasta 500 Hz \autocite{FacultadCienciasActividad}}. Estos marcadores se colocan en diferentes partes del cuerpo del deportista, logrando capturar un movimiento preciso. Los datos capturados se almacenan en un fichero en formato C3D, que contiene la información necesaria para la representación del movimiento. \todo{Añadir mas info sobre el sistema Vicon de INEF}
 
 Las tecnologías que existen en el mercado para la visualización de estos movimientos son muy costosas, y no siempre se adaptan a las necesidades de los investigadores. Por ello, en este proyecto se ha desarrollado una aplicación para la visualización de movimientos capturados en formato C3D. La aplicación permite la visualización de los movimientos en un entorno tridimensional, pudiendo variar diferentes parámetros de la visualización, como la velocidad de reproducción, la posición de la cámara, la representación de los marcadores, de las uniones, vectores o fuerzas.
+
+Es relevante señalar que este Proyecto se ciñe al sistema MoCap disponible en la facultad de INEF de la UPM, por el elevado coste de estos sistemas y la imposibilidad de trabajar con alternativas de la competencia. Sin embargo, existen otras alternativas con gran aceptación en el mercado.
+
+\subsection{Alternativas}
+\noindent Existen diferentes alternativas a los sistemas Vicon disponibles en el mercado, como los sistemas OptiTrack o Qualisys. En el artículo \autocite{article} se comparan estos sistemas, quedando patente que estos sistemas son capaces de capturar correctamente el movimiento. Además, en la \autoref{fig:errores-mocap} se aprecia como los errores de estos sistemas se han ido reduciendo a lo largo del tiempo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{errores-mocap.png}
+    \caption{Error absoluto de diferentes sistemas. Obtenido de \autocite{article}.}
+    \label{fig:errores-mocap}
+\end{figure}
 
 \section{Ficheros C3D} \label{sec:ficheros-c3d}
 
@@ -13,6 +30,10 @@ Las tecnologías que existen en el mercado para la visualización de estos movim
 El formato C3D es un formato de fichero binario de dominio público que se crea a mediados de los años 80, en el \textit{National Institutes of Health Biomechanics Laboratory}, en Maryland, USA, y es compatible con todos los principales sistemas de captura de movimiento 3D. Es usado por empresas de las industrias de biomecánica, captura de movimiento y animación \autocite{C3DORGBiomechanicsStandard}.
 
 Un fichero C3D es un fichero binario que contiene toda la información de la captura de movimiento. Como se explica en \autocite{C3DORGBiomechanicsStandard}, este fichero se compone de diferentes secciones, que contienen la información de los marcadores para cada fotograma de la captura. Existen diferentes \textit{parsers} que permiten la lectura de estos ficheros, y la extracción de la información necesaria para la representación del movimiento. En este proyecto se ha utilizado el \textit{crate} \texttt{c3dio}, que permite la lectura de ficheros C3D en Rust, y tiene un \textit{plugin} para \texttt{Bevy} que facilita la integración con el motor de videojuegos, que se explica en el \autoref{subsec:bevy}.
+
+\subsection{Herramientas actuales para la visualización de ficheros C3D}
+
+\noindent Las herramientas actuales que existen en el mercado para la visualización de un fichero C3D son escasas y generalmente costosas. Una biblioteca famosa en el pasado para el tratamiento de ficheros C3D era la \textit{Biomechanics ToolKit} - BTK, pero fue comprada por la compañía canadiense \textit{Movec}, que tiene intención de renovarla bajo el nombre comercial \textit{Bridge} \autocite{Bridge,ProjectBiomechanicalToolKit}.
 
 \section{Lenguaje de programación}
 
@@ -43,7 +64,7 @@ Rust dispone de características modernas, como un gestor de paquetes para la ge
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{comparativa rendimiento lenguajes.png}
-    \caption{Comparativa de rendimiento en entornos de escritorio \autocite{zotero-253}}
+    \caption{Comparativa de rendimiento en entornos de escritorio \autocite{zotero-16}}
     \label{fig:comparativa-rendimiento}
 \end{figure}
 
@@ -67,10 +88,10 @@ Un \textit{benchmark} de rendimiento en entornos web se puede encontrar en \auto
 \end{enumerate}
 
 \section{Herramientas de desarrollo}
-\noindent Para conseguir una aplicación gráfica eficiente, se debe de contar con una interfaz que permita a la aplicación trabajar con el hardware del dispositivo. Por tanto, es importante utilizar herramientas multiplataforma que permitan a la aplicación ser eficiente en diferentes entornos. En Rust, existen muchos \textit{crates} (unidades de compilación, ver \autocite{PackagesCratesRust}) que permiten el desarrollo de aplicaciones gráficas, como \texttt{wgpu}, \texttt{glium}, \texttt{ggez}, \texttt{piston}, etc. Sin embargo, estos \textit{crates} son de muy bajo nivel, y crear una aplicación gráfica desde cero con ellos puede ser una tarea exigente en términos de tiempo. 
+\noindent Para conseguir una aplicación gráfica eficiente, se debe de contar con una interfaz que permita a la aplicación trabajar con el hardware del dispositivo. Por tanto, es importante utilizar herramientas multiplataforma que permitan a la aplicación ser eficiente en diferentes entornos. En Rust, existen muchos \textit{crates} (unidades de compilación, ver \autocite{PackagesCratesRust}) que permiten el desarrollo de aplicaciones gráficas, como \texttt{wgpu} \autocite{WgpuPortableGraphics}, \texttt{glium} \autocite{GliumGlium2025}, \texttt{piston} \autocite{PistonModularOpen}, etc. Sin embargo, estos \textit{crates} son de muy bajo nivel, y crear una aplicación gráfica desde cero con ellos puede ser una tarea exigente en términos de tiempo. 
 
 \subsection{Bevy} \label{subsec:bevy}
-\noindent Para eliminar la limitación anteriormente comentada, se ha decidido utilizar un motor de videojuegos modular, que implemente internamente diferentes APIs gráficas, como Vulkan, Metal o DirectX, abstrayendo esta complejidad. Para este proyecto, se ha decidido utilizar el motor de videojuegos \textit{Bevy}, que está escrito plenamente en Rust y que cuenta con una comunidad numerosa y activa.
+\noindent Para eliminar la limitación anteriormente comentada, se ha decidido utilizar un motor de videojuegos modular, que implemente internamente diferentes APIs gráficas, como Vulkan, Metal o DirectX, abstrayendo esta complejidad. Para este proyecto, se ha decidido utilizar el motor de videojuegos \textit{Bevy}, que está escrito plenamente en Rust y que cuenta con una comunidad numerosa y activa \autocite{BevyEngine}.
 
 Las principales características de \texttt{Bevy} son las siguientes:
 \begin{enumerate}
@@ -78,4 +99,4 @@ Las principales características de \texttt{Bevy} son las siguientes:
     \item \textbf{Soporte multiplataforma:} \texttt{Bevy} es un motor de videojuegos multiplataforma, que interacciona con diferentes APIs gráficas, como Vulkan, Metal o DirectX en entornos de escritorio, o WebGPU en entornos web. Esto permite que una aplicación desarrollada con \texttt{Bevy} pueda ejecutarse en diferentes sistemas operativos, como Windows, macOS, Linux o la web. La elección de la API gráfica se realiza de forma automática, en función del sistema operativo en el que se ejecute la aplicación.
 \end{enumerate}
 
-Otro aspecto destacado de \texttt{Bevy} es que se basa en el patrón de diseño ECS (Entity-Component-System), que permite la creación de entidades, componentes y sistemas de forma independiente. 
+Otro aspecto destacado de \texttt{Bevy} es que se basa en el patrón de diseño ECS (\textit{Entity-Component-System}), que permite la creación de entidades, componentes y sistemas de forma independiente. 
