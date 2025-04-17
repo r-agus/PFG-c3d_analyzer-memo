@@ -60,6 +60,153 @@ Se muestra en la \autoref{fig:entorno3D} una imagen del entorno tridimensional c
   \label{fig:entorno3D}
 \end{figure}
 
-En este entorno destacan el plano central, representado en un color verde oscuro, y sobre el que se apoyan 3 vectores que sirven como referencia. El código que genera estos vectores se incluye en el \autoref{apx:spawn_ref_vec}, demostrando la flexibilidad de \textit{Bevy} y el potencial de Rust
+En este entorno destacan el plano central, representado en un color verde oscuro, y sobre el que se apoyan 3 vectores que sirven como referencia. El código que genera estos vectores se incluye en el \autoref{apx:spawn_ref_vec}, demostrando la flexibilidad de \textit{Bevy} y el potencial de Rust. 
 
-\todo{Figura del swing en el entorno de Enrique}
+\section{Fichero de configuración \acs{TOML}}
+
+El fichero de configuración de este proyecto define el modo de representación del fichero \ac{C3D} en el entorno 3D. 
+
+Al igual que en el fichero de configuración de Vicon, explicado en \autoref{sec:ficheros-configuracion}, se definen las posibles configuraciones entre corchetes. Cualquier configuración cuenta con un grupo de puntos visibles (\textit{visible\_points}), un grupo de uniones (\textit{joins}) y un grupo de vectores (\textit{vectors}).
+
+Estos grupos son opcionales, y pueden aparecer en cualquier orden. En caso de no aparecer, el programa no los representará.
+
+\subsection{Configuración básica}
+
+Una posible configuración podría ser la siguiente:
+
+\begin{lstlisting}[style=mystyle, caption={Ejemplo simple de un fichero de configuración}, label={lst:ajuste-simple}]
+[config1]
+  visible_points = [
+    "LFHD", "RFHD", "RBHD", "LBHD"
+  ]
+  joins = [
+    ["LFHD", "RFHD", "RBHD", "LBHD", "LFHD"]
+  ]
+\end{lstlisting}
+
+En el \autoref{lst:ajuste-simple} se muestra una configuración sencilla, \texttt{config1}, que representa los marcadores \ac{LFHD}, \ac{RFHD}, \ac{RBHD} y \ac{LBHD} como puntos visibles. Después, se define una unión entre los cuatro marcadores. Para representar un cuadrado, se duplica el primer marcador, \ac{LFHD}, al final de la lista. De este modo, se cierra la unión entre los cuatro marcadores. Además, se puede apreciar que en el grupo de uniones aparece un corchete extra. Esto se debe a que el grupo se considera una lista de listas. Las listas hijas representan diferentes uniones, es decir, grupos independientes de marcadores que se unen entre sí.
+
+Estos cuatro marcadores representan los puntos de la cabeza. Es una combinación muy común, que posiblemente se utilice en varias configuraciones. Para facilitar su uso, el fichero de configuración permite definir un grupo de marcadores como un alias. De este modo, se puede definir el grupo de marcadores de la cabeza como \texttt{head}, y usarlo en la configuración de la siguiente manera:
+
+\begin{lstlisting}[style=mystyle, caption={Ejemplo de un grupo de puntos}, label={lst:grupos-puntos}]
+[point_groups]
+  head = ["LFHD", "RFHD", "RBHD", "LBHD", "LFHD"]
+  shoulders = ["LSHO", "RSHO"]
+
+[config1]
+  visible_points = [
+    ["head"]
+  ]
+  joins = [
+    [["head"]]
+  ]
+[config2]
+  visible_points = [
+    ["head"], ["shoulders"]
+  ]
+  joins = [
+    [["head"]], 
+    [["shoulders"]]
+  ]
+\end{lstlisting}
+
+En el \autoref{lst:grupos-puntos} se muestra un ejemplo de cómo definir grupos de puntos, mediante la palabra reservada \textit{point\_groups}. En este caso, se definen dos grupos, \texttt{head} y \texttt{shoulders}. La forma de indicar al programa que se está referenciando a un grupo de puntos en vez de a un marcador es envolviendo al nombre entre corchetes.
+
+En este caso, en la configuración \texttt{config1}, se representa el grupo de la cabeza como un punto visible y como una unión\footnote{Nótese que al usar el grupo de puntos de la cabeza, se está incluyendo dos veces el punto \ac{LFHD}. Esto no es relevante, dado que internamente el programa trata este punto como uno solo, al usarse como clave de un \textit{Hashmap}, que no permite la duplicación de elementos.}. En la configuración \texttt{config2}, se representan ambos grupos como puntos visibles y como uniones independientes. 
+
+\subsection{Personalización}
+
+El fichero de configuración permite personalizar la representación de los marcadores. Para ello, se definen una serie de palabras reservadas. Estas palabras son \texttt{point\_color}, \texttt{point\_size}, \texttt{join\_color} y \texttt{line\_thickness}. Estas palabras son opcionales, y permiten personalizar la representación de los marcadores y las uniones. Los colores se pueden definir en formato rgb, como una lista de tres números enteros entre 0 y 255, o como rgb con transparencia, como una lista de cuatro números enteros entre 0 y 255.
+
+\begin{lstlisting}[style=mystyle, caption={Configuración personalizada}, label={lst:cfg-personalizada}]
+[point_groups]
+  head = ["LFHD", "RFHD", "RBHD", "LBHD", "LFHD"]
+  shoulders = ["LSHO", "RSHO"]
+
+[config1]
+  visible_points = [
+    ["head"]
+  ]
+  joins = [
+    [["head"]]
+  ]
+  point_color = [255, 0, 0]
+  join_color = [0, 0, 255]
+  line_thickness = 2.0
+  point_size = 1.5
+
+[config2]
+  visible_points = [
+    ["head"], ["shoulders"]
+  ]
+  joins = [
+    [["head"]], 
+    [["shoulders"]]
+  ]
+  point_color = [0, 0, 255, 100]
+  point_size = 2.0
+\end{lstlisting}
+
+En el \autoref{lst:cfg-personalizada} se muestra un ejemplo de la personalización de una configuración, sobreescribiendo los valores por defecto. En este caso, para la configuración \texttt{config1}, los marcadores se representan en rojo, y las uniones en verde. Cada línea se representa con el doble de grosor que el valor por defecto, y los marcadores tienen un tamaño 1.5 veces mayor que el valor por defecto. En la configuración \texttt{config2}, los marcadores se representan en azul, con un 40\% de transparencia, y el doble de tamaño que el valor por defecto. Las uniones no se personalizan, por lo que se usan los valores por defecto.
+
+Lo visto en el \autoref{lst:cfg-personalizada} es un ejemplo de sobreescritura de los valores por defecto para cada configuración. Sin embargo, se puede lograr una personalización más extrema gracias a los grupos de puntos, a los que se les pueden aplicar las mismas palabras reservadas. De este modo, se pueden definir diferentes colores y tamaños para cada grupo de puntos. En el \autoref{lst:cfg-grupos-personalizados} se muestra un ejemplo de cómo personalizar los grupos de puntos:
+
+\begin{lstlisting}[style=mystyle, caption={Configuración personalizada de grupos de puntos}, label={lst:cfg-grupos-personalizados}]
+[point_groups]
+  head = ["LFHD", "RFHD", "RBHD", "LBHD", "LFHD"]
+  shoulders = ["LSHO", "RSHO"]
+
+[head.config]
+  point_color = [255, 0, 0]
+  point_size = 0.5
+  join_color = [255, 128, 0]
+
+[config1]
+  visible_points = [
+    ["head"]
+  ]
+  joins = [
+    [["head"]]
+  ]
+  point_color = [255, 0, 0]
+  join_color = [0, 0, 255]
+  line_thickness = 2.0
+  point_size = 1.5
+
+[config2]
+  visible_points = [
+    ["head"], ["shoulders"]
+  ]
+  joins = [
+    [["head"]], 
+    [["shoulders"]]
+  ]
+  point_color = [0, 0, 255, 100]
+  point_size = 2.0
+\end{lstlisting}
+
+Como se puede apreciar, se utiliza el nombre del grupo de puntos seguido de \texttt{.config} para definir la configuración de ese grupo, sobreescribiendo el valor por defecto de su configuración. En este caso, el grupo de puntos \texttt{head} se representa en rojo, con un tamaño de 0.5 veces el valor por defecto, y las uniones en naranja. El grupo de puntos \texttt{shoulders} no se personaliza, por lo que se usan los valores por defecto, que será azul en \texttt{config1} y verde en \texttt{config2}, puesto que verde es el color por defecto para las uniones, y en \texttt{config2} no se está sobreescribiendo.
+
+\subsection{Configuración de vectores}
+
+Los vectores son similares a los vectores de referencia explicados en \autoref{sec:bevy}. En el fichero de configuración, se definen como un punto de anclaje, una lista de elementos anclados a ese marcador, y opcionalmente una escala. Los vectores permiten representar relaciones espaciales y se pueden utilizar para definir trayectorias o movimientos en el espacio tridimensional.
+
+\begin{lstlisting}[style=mystyle, caption={Configuración de un vector}, label={lst:cfg-vector}]
+[config1]
+  vectors = [ 
+    ["OBJ1", "LVelOBJ1"],
+    ["LUarmCM", ["LUarmIv", "LUarmJv", "LUarmKv"], 2.5],
+    ["RUarmCM", ["RUarmIv", "RUarmJv"], 2.5],
+    ["RUarmCM", "RUarmKv", 1.5],
+]
+\end{lstlisting}
+
+En el \autoref{lst:cfg-vector} se muestra un ejemplo de como configurar vectores. En este caso, se han definido tres puntos de anclaje: \texttt{OBJ1}, \texttt{LUarmCM} y \texttt{RUarmCM}. 
+
+El primero de ellos, \texttt{OBJ1}, tiene un solo elemento anclado, \texttt{LVelOBJ1}. Esta configuración ancla el marcador de representación de la velocidad de LVelOBJ1 a OBJ1. Esto representará un vector tangente a la trayectoria del objeto en cualquier punto.
+
+El segundo, \texttt{LUarmCM}, tiene tres elementos anclados, \texttt{LUarmIv}, \texttt{LUarmJv} y \texttt{LUarmKv}, y una escala de 2.5. Esta es una configuración estándar para la representación de un sistema de coordenadas local, que sirven para cuantificar la rotación de un marcador.
+
+El tercero, \texttt{RUarmCM}, tiene tres elementos anclados, \texttt{RUarmIv} y \texttt{RUarmJv}, con una escala de 2.5, y posteriormente se añade el tercer elemento, \texttt{RUarmKv}, con una escala de 1.5. Similar al caso anterior, se representa un sistema de coordenadas local, pero reduciendo el tamaño de la componente K.
+
+Los vectores tienen una configuración de color fija. Para los vectores que tienen un número diferente a tres elementos anclados, se representan en amarillo, mientras que si el número de marcadores anclados a un punto es exactamente igual a tres, el programa entiende que se trata de una representación de vectores de referencia, para lo que utiliza colores estándar en otros motores de videojuegos, representando la primera componente en rojo, la segunda en verde y la tercera en azul. 

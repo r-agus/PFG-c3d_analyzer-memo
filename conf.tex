@@ -114,6 +114,18 @@
 \usepackage{siunitx}
 \usepackage{multirow}
 \usepackage{listings, listings-rust}
+\lstset{
+  inputencoding=utf8,
+  extendedchars=true,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+    {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+}
+
+\providecommand{\lstlistingautorefname}{Fragmento}
+\renewcommand{\lstlistingname}{Fragmento}
+
 
 % Paquetes deshabilitados
 % \usepackage{pict2e} % mejora del paquete picture. Para cosas mas complejas usar tikz

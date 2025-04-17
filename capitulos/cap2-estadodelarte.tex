@@ -34,7 +34,9 @@ Existen diferentes \textit{parsers} que permiten la lectura de estos ficheros, y
 
 \subsection{Herramientas actuales para la visualización de ficheros \acs{C3D}}
 
-Las herramientas actuales que existen en el mercado para la visualización de un fichero \ac{C3D} son escasas y generalmente costosas. Una biblioteca famosa en el pasado para el tratamiento de ficheros \ac{C3D} era la \textit{Biomechanics ToolKit} - BTK, pero fue comprada por la compañía canadiense \textit{Movec}, que tiene intención de renovarla bajo el nombre comercial \textit{Bridge} \autocite{Bridge,ProjectBiomechanicalToolKit}.
+Las herramientas actuales que existen en el mercado para la visualización de un fichero \ac{C3D} son escasas y generalmente costosas. Una biblioteca famosa en el pasado para el tratamiento de ficheros \ac{C3D} era la \textit{Biomechanics ToolKit} - BTK, pero fue comprada por la compañía canadiense \textit{Movec}, que tiene intención de renovarla bajo el nombre comercial \textit{Bridge} \autocite{Bridge,ProjectBiomechanicalToolKit}. Por otro lado, el entorno de trabajo proporcionado por las cámaras Vicon de \ac{INEF} es antiguo y tosco, no admitiendo características clave en el la época actual, como la visualización en línea. Además, su licencia es propietaria y tiene un coste elevado.
+
+\todo{Imagen del entorno de Enrique}
 
 \section{Lenguaje de programación}
 
@@ -60,7 +62,7 @@ Rust dispone de características modernas, como un gestor de paquetes para la ge
 \subsubsection{Unity}
 Unity es un motor de videojuegos multiplataforma, que permite el desarrollo de videojuegos en 2D y 3D. Unity es un motor de videojuegos muy popular, que se puede utilizar también como herramienta crear simulaciones, que es el propósito de este proyecto. Unity dispone de una gran cantidad de herramientas y bibliotecas, que facilitan el desarrollo de aplicaciones de todo tipo. Sin embargo, Unity es un motor de videojuegos pesado, que consume muchos recursos, y que no es especialmente eficiente en términos de rendimiento, sobre todo en entornos web.
 
-\section{Comparativa de rendimiento}
+\subsection{Comparativa de rendimiento}
 
 \begin{figure}[H]
     \centering
@@ -71,15 +73,15 @@ Unity es un motor de videojuegos multiplataforma, que permite el desarrollo de v
 
 % https://goodmanwen.github.io/Programming-Language-Benchmarks-Visualization/
 
-\noindent Como se puede observar en la \autoref{fig:comparativa-rendimiento}, que coincide con el análisis de \autocite{samTop10Fastest2024}, Rust cae en los primeros puestos por rendimiento, teniendo un rendimiento similar al de C y C++, y superando ampliamente a Python y Node.js (\textit{JavaScript}).
+Como se puede observar en la \autoref{fig:comparativa-rendimiento}, que coincide con el análisis de \autocite{samTop10Fastest2024}, Rust cae en los primeros puestos por rendimiento, teniendo un rendimiento similar al de C y C++, y superando ampliamente a Python y Node.js (\textit{JavaScript}).
 
-Sin embargo, esta tabla no es válida en entornos web, dado que en estos entornos el rendimiento de los diferentes lenguajes de programación se ve limitado por características propias de los navegadores. Por ejemplo, Rust compilado a WebAssembly no tiene acceso directo al DOM (\textit{Document Object Model}, el modelo de objetos de un documento HTML). Esto significa que Rust no puede manipular directamente los elementos de la página web, y que necesita comunicarse con JavaScript para hacerlo. 
+Sin embargo, esta tabla no es válida en entornos web, dado que en estos entornos el rendimiento de los diferentes lenguajes de programación se ve limitado por características propias de los navegadores. Por ejemplo, Rust compilado a WebAssembly no tiene acceso directo al \ac{DOM}, que es el modelo de objetos de un documento HTML. Esto significa que Rust no puede manipular directamente los elementos de la página web, y que necesita comunicarse con JavaScript para hacerlo. 
 
 Un \textit{benchmark} de rendimiento en entornos web se puede encontrar en \autocite{InteractiveResults}, que muestra que \textit{vanilla JavaScript} es el lenguaje más rápido en este tipo de entornos. Sin embargo, en un proyecto como este, no se contempla el uso de \textit{vanilla JavaScript}, puesto que se necesita un \textit{framework} que permita la creación de aplicaciones gráficas de forma sencilla y eficiente. Si se analiza el rendimiento de diferentes \textit{frameworks} en entornos web, se puede ver que la diferencia entre los basados en \textit{JavaScript} y los basados en \textit{Rust} es mínima, no habiendo un claro vencedor en este aspecto \autocite{InteractiveResults}.
 
-\section{Elección del lenguaje de programación}
+\subsection{Elección del lenguaje de programación}
 
-\noindent Valorando las diferentes opciones, se ha decidido utilizar Rust para el desarrollo de la aplicación. Las características que han sido determinantes en la elección de Rust son las siguientes:
+Valorando las diferentes opciones, se ha decidido utilizar Rust para el desarrollo de la aplicación. Las características que han sido determinantes en la elección de Rust son las siguientes:
 
 \begin{enumerate}
     \item \textbf{Seguridad:} Rust es un lenguaje de programación que garantiza la seguridad de la memoria en tiempo de compilación, lo que evita errores comunes en la programación, como los desbordamientos de búfer o las fugas de memoria.
@@ -88,11 +90,67 @@ Un \textit{benchmark} de rendimiento en entornos web se puede encontrar en \auto
     \item \textbf{Versatilidad:} Rust es un lenguaje de programación multiparadigma, que combina elementos de programación funcional, orientada a objetos e imperativa, lo que facilita el desarrollo de aplicaciones de todo tipo.
 \end{enumerate}
 
+\section{Ficheros de configuración} \label{sec:ficheros-configuracion}
+
+Los ficheros \ac{C3D} que este proyecto pretende representar pueden tener un número muy elevado de marcadores, superando ampliamente el millar. Representar una cantidad muy elevada de marcadores en el entorno es contraproducente, pues no permite focalizar en los puntos que se pretende estudiar. Por tanto, es importante generar una configuración que permita seleccionar los marcadores de interés.
+
+Vicon cuenta con un formato propietario para definir configuraciones que su aplicación de representación de movimiento utiliza. En el fragmento \autoref{lst:mkr} se muestra un fragmento de este tipo de ficheros, (formato MKR), que presenta una única configuración de marcadores, llamada \texttt{Autolabel}.
+
+\begin{lstlisting}[style=mystyle, caption={Fragmento de un fichero MKR}, label=lst:mkr]
+!MKR#2
+
+[Autolabel]
+	LFHD	Left front head
+	RFHD	Right front head
+	LBHD	Left back head
+	RBHD	Right back head
+
+    LFHD,RFHD,LBHD,RBHD
+\end{lstlisting}
+
+En esta configuración, se definen cuatro marcadores, \texttt{LFHD}, \texttt{RFHD}, \texttt{LBHD} y \texttt{RBHD}, y se les añade una breve descripción. Estos marcadores serán los que la aplicación represente. En la última línea se especifica que estos marcadores se unirán con una línea, por estar separados mediante comas. Este formato es sencillo y fácil de entender, pero no es demasiado flexible, y no permite variar el tamaño, forma o color de los marcadores o uniones.
+
+Para este proyecto, se ha decidido usar un formato estándar, con un mayor número de opciones que el formato MKR. Para este caso de uso existen diversos lenguajes de configuración comúnmente utilizados.
+
+\subsection{\acs{JSON}}
+
+\ac{JSON} es un formato de serialización de datos ligero y de fácil lectura para humanos y máquinas. Originalmente derivado de JavaScript, \ac{JSON} es un fichero comúnmente utilizado en numerosos entornos por su simplicidad.
+
+Este formato utiliza una estructura basada en pares clave-valor y soporta tipos de datos básicos como números, cadenas de texto, booleanos, arrays y objetos anidados. Su sintaxis compacta y la amplia disponibilidad de bibliotecas para su procesamiento en prácticamente todos los lenguajes de programación lo han convertido en una opción popular para la configuración de aplicaciones e intercambio de datos.
+
+A pesar de su popularidad, \ac{JSON} presenta algunas limitaciones como la falta de soporte nativo para comentarios y la necesidad de utilizar comillas para las claves, lo que puede reducir su legibilidad en configuraciones complejas.
+
+\todo{Referencia a JSON}
+
+\subsection{\acs{YAML}}
+
+Igual que \ac{JSON}, \ac{YAML} es un formato de serialización de datos que se utiliza comúnmente para la configuración y el intercambio de datos. Sin embargo, \ac{YAML} se diseñó con un enfoque en la legibilidad humana, utilizando sangría para definir la estructura jerárquica en lugar de llaves y corchetes.
+
+Este formato destaca por su sintaxis minimalista que elimina la mayoría de los símbolos de puntuación y permite representar datos complejos de manera clara. \ac{YAML} soporta todos los tipos de datos básicos de \ac{JSON}, pero añade características adicionales como soporte nativo para comentarios, referencias y etiquetas de tipo explícitas.
+
+Una de las ventajas principales de \ac{YAML} es su capacidad para representar configuraciones complejas de manera concisa y legible. Es ampliamente utilizado en herramientas de infraestructura como código, configuración de aplicaciones y plataformas de contenedores como Docker y Kubernetes.
+
+Sin embargo, \ac{YAML} también presenta algunos inconvenientes, como la dependencia en la sangría que puede generar errores difíciles de detectar, y una sintaxis que en ocasiones puede resultar ambigua, especialmente en el manejo de cadenas de texto con caracteres especiales.
+
+\todo{Referencia a YAML}
+
+\subsection{\acs{TOML}}
+
+\ac{TOML} es un formato de serialización de datos diseñado para ser un lenguaje de configuración sencillo y legible. \ac{TOML} es famoso por su uso en Rust, siendo el formato oficial para los ficheros de configuración \texttt{Cargo.toml} del gestor de paquetes de Rust.
+
+Este formato se caracteriza por su sintaxis clara que recuerda a los ficheros INI pero con tipos de datos más ricos y soporte para estructuras jerárquicas. \ac{TOML} destaca por su capacidad para representar datos complejos de manera clara y sin ambigüedades, lo que lo hace ideal para configuraciones de aplicaciones.
+
+\todo{Referencia a TOML}
+
+\subsection{Elección del formato de configuración}
+
+En este proyecto se ha decidido utilizar el formato \ac{TOML} para definir la configuración de representación. Este formato es sencillo y comparte similitudes con el formato MKR de Vicon. Además, \ac{TOML} es un formato de configuración ampliamente utilizado en el ecosistema de Rust, lo que da visibilidad a este lenguaje.
+
 \section{Herramientas de desarrollo}
-\noindent Para conseguir una aplicación gráfica eficiente, se debe de contar con una interfaz que permita a la aplicación trabajar con el hardware del dispositivo. Por tanto, es importante utilizar herramientas multiplataforma que permitan a la aplicación ser eficiente en diferentes entornos. En Rust, existen muchos \textit{crates} (unidades de compilación, ver \autocite{PackagesCratesRust}) que permiten el desarrollo de aplicaciones gráficas, como \texttt{wgpu} \autocite{WgpuPortableGraphics}, \texttt{glium} \autocite{GliumGlium2025}, \texttt{piston} \autocite{PistonModularOpen}, etc. Sin embargo, estos \textit{crates} son de muy bajo nivel, y crear una aplicación gráfica desde cero con ellos puede ser una tarea exigente en términos de tiempo. 
+Para conseguir una aplicación gráfica eficiente, se debe de contar con una interfaz que permita a la aplicación trabajar con el hardware del dispositivo. Por tanto, es importante utilizar herramientas multiplataforma que permitan a la aplicación ser eficiente en diferentes entornos. En Rust, existen muchos \textit{crates} (unidades de compilación, ver \autocite{PackagesCratesRust}) que permiten el desarrollo de aplicaciones gráficas, como \texttt{wgpu} \autocite{WgpuPortableGraphics}, \texttt{glium} \autocite{GliumGlium2025}, \texttt{piston} \autocite{PistonModularOpen}, etc. Sin embargo, estos \textit{crates} son de muy bajo nivel, y crear una aplicación gráfica desde cero con ellos puede ser una tarea exigente en términos de tiempo. 
 
 \subsection{Bevy} \label{subsec:bevy}
-\noindent Para eliminar la limitación anteriormente comentada, se ha decidido utilizar un motor de videojuegos modular, que implemente internamente diferentes APIs gráficas, como Vulkan, Metal o DirectX, abstrayendo esta complejidad. Para este proyecto, se ha decidido utilizar el motor de videojuegos \textit{Bevy}, que está escrito plenamente en Rust y que cuenta con una comunidad numerosa y activa \autocite{BevyEngine}.
+Para eliminar la limitación anteriormente comentada, se ha decidido utilizar un motor de videojuegos modular, que implemente internamente diferentes APIs gráficas, como Vulkan, Metal o DirectX, abstrayendo esta complejidad. Para este proyecto, se ha decidido utilizar el motor de videojuegos \textit{Bevy}, que está escrito plenamente en Rust y que cuenta con una comunidad numerosa y activa \autocite{BevyEngine}.
 
 Las principales características de \texttt{Bevy} son las siguientes:
 \begin{enumerate}
