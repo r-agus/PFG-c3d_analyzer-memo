@@ -1,7 +1,7 @@
 \documentclass[12pt,a4paper]{report}
 
 % Paquetes para el manejo de la lengua y la codificación de los caracteres
-\usepackage[spanish]{babel} % Para tener los elementos de texto en español
+\usepackage[spanish,es-tabla]{babel} % Para tener los elementos de texto en español
 \usepackage[T1]{fontenc} % Set the font (output) encodings for español
 
 % Paquetes para el manejo de gráficos e imágenes
@@ -10,6 +10,7 @@
 
 % Paquetes para el manejo de matemáticas
 \usepackage{amsmath} % para poner flechas dentro del código
+\usepackage{acronym}
 
 % Paquetes para el manejo de la geometría del documento y la justificación del texto
 \usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry} % para la portada. REVISAR QUE HACE
@@ -35,13 +36,13 @@
 \usepackage{listingsutf8}
 \usepackage{pxfonts,fix-cm}
 \usepackage{accsupp} % Para poder poner los número en el código y que no se copien al seleccionar el código
-\usepackage{xcolor}
 \newcommand{\noncopynumber}[1]{%
     \BeginAccSupp{method=escape,ActualText={}}%
     #1%
     \EndAccSupp{}%
 }
 
+\usepackage[table]{xcolor}
 % Configuración de la presentación del código
 \definecolor{sviolet}{HTML}{6C71C4}
 \definecolor{sbase1}{HTML}{93A1A1}
@@ -110,6 +111,9 @@
 \usepackage{array}
 \usepackage{tabularx}
 \usepackage{todonotes}
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{listings, listings-rust}
 
 % Paquetes deshabilitados
 % \usepackage{pict2e} % mejora del paquete picture. Para cosas mas complejas usar tikz

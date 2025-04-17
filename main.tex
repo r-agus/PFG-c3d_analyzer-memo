@@ -35,15 +35,16 @@ Biomecánico con Motion Capture}
 \chapter*{Agradecimientos}
 \noindent Añade aqui tus agradecimientos...
 
-% Índice de figuras
-\listoffigures
-
-% Lista de acrónimos
-
 % Índice de contenidos (obligatorio)
 \hypersetup{pageanchor=false}
 \hypersetup{linkcolor=black}
 \tableofcontents
+
+% Índice de figuras
+\listoffigures
+\listoftables
+
+\input{capitulos/achronym.tex}
 
 % Contenidos
 \pagenumbering{arabic} % cambiamos la numeración de las páginas
@@ -70,11 +71,6 @@ Biomecánico con Motion Capture}
 \label{sec:cap6}
 \input{capitulos/conclusiones}
 
-% Referencias (obligatorio)
-% \nocite{nombre-de-referencia}
-% \nocite{javaccgithub}
-%  añade aqui referencias que no se citen directamente...
-
 \label{sec:bibliografía}
 \printbibliography
 
@@ -85,8 +81,7 @@ Biomecánico con Motion Capture}
 \input{capitulos/preguntasfrecuentes}
 \chapter{Herramientas utilizadas}
 \input{capitulos/herramientas}
-\chapter{Código Fuente}
-\label{sec:codigofuente}
-\input{capitulos/codigofuente}
+\input{apendices/c3d-a-latex.tex}
+\input{apendices/creacion_vectores.tex}
 
 \end{document}
