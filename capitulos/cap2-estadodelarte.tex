@@ -30,7 +30,9 @@ El formato \ac{C3D} es un formato de fichero binario de dominio público que se 
 
 Un fichero \ac{C3D} es un fichero binario que contiene toda la información de la captura de movimiento. Como se explica en \autocite{C3DORGBiomechanicsStandard}, este fichero se compone de diferentes secciones, que contienen la información de los marcadores para cada fotograma de la captura. Se utilizan estos ficheros en vez de ficheros de texto para reducir el tamaño del fichero, y para garantizar la integridad de los datos.
 
-Existen diferentes \textit{parsers} que permiten la lectura de estos ficheros, y la extracción de la información necesaria para la representación del movimiento. En este proyecto se ha utilizado el \textit{crate} \texttt{c3dio}, que permite la lectura de ficheros \ac{C3D} en Rust, y tiene un \textit{plugin} para \texttt{Bevy} que facilita la integración con el motor de videojuegos, que se explica en el \autoref{subsec:bevy}.
+Es importante señalar que el formato \ac{C3D} contiene información de objetos con coordenadas tridimensionales, pero estos objetos no tienen por qué ser marcadores. Por ejemplo, en el fichero \ac{C3D} se pueden almacenar diferentes tipos de objetos, como marcadores, vectores, fuerzas, etc. Por tanto, es importante entender el formato \ac{C3D} para poder extraer la información necesaria para la representación del movimiento. Además, es necesaria una herramienta para filtrar la información que se quiere representar, ya que un fichero \ac{C3D} puede contener miles de objetos, y no todos ellos son relevantes para la representación del movimiento.
+
+Existen diferentes \textit{parsers} que permiten la lectura de estos ficheros, y la extracción de la información necesaria para la representación del movimiento. En este proyecto se ha modificado el \textit{crate} \texttt{c3dio}, que permite la lectura de ficheros \ac{C3D} en Rust, y tiene un \textit{plugin} para \texttt{Bevy} que facilita la integración con el motor de videojuegos, que se explica en el \autoref{subsec:bevy}.
 
 \subsection{Herramientas actuales para la visualización de ficheros \acs{C3D}}
 
@@ -67,7 +69,7 @@ Unity es un motor de videojuegos multiplataforma, que permite el desarrollo de v
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{comparativa rendimiento lenguajes.png}
-    \caption{Comparativa de rendimiento en entornos de escritorio \autocite{zotero-16}}
+    \caption{Comparativa de rendimiento en entornos de escritorio \autocite{zotero-253}}
     \label{fig:comparativa-rendimiento}
 \end{figure}
 
@@ -159,3 +161,8 @@ Las principales características de \texttt{Bevy} son las siguientes:
 \end{enumerate}
 
 Otro aspecto destacado de \texttt{Bevy} es que se basa en el patrón de diseño ECS (\textit{Entity-Component-System}), que permite la creación de entidades, componentes y sistemas de forma independiente. 
+
+La versión que este proyecto utiliza de \texttt{Bevy} es la 0.15.0, que fue la versión más reciente al momento de la implementación del proyecto.
+
+
+% wasm y wasm bindgen, Blob URL
