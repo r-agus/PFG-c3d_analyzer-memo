@@ -9,7 +9,7 @@
 
 \chapter{Desarrollo} \label{sec:cap3}
 
-\noindent Este proyecto se ha llevado a cabo en diferentes etapas. En un comienzo, se trabaja con un fichero \ac{C3D} capturado por las cámaras de INEF, con el sistema de captura de datos de la marca Vicon explicado en el \autoref{sec:cap2}. Estos datos de entrada consisten en una grabación a 240 Hz de un \textit{swing} de golf\footnote{Un swing de golf es la acción mediante la cual los jugadores golpean la pelota en este deporte \autocite{GolfSwing2025}}. 
+\noindent Este proyecto se ha llevado a cabo en diferentes etapas. En un comienzo, se trabaja con un fichero \ac{C3D} capturado por las cámaras de INEF, con el sistema de captura de datos de la marca Vicon explicado en el \autoref{sec:cap2}. Estos datos de entrada consisten en una grabación a 240 \ac{Hz} de un \textit{swing} de golf\footnote{Un swing de golf es la acción mediante la cual los jugadores golpean la pelota en este deporte \autocite{GolfSwing2025}}. 
 
 Como se ha explicado en el \autoref{sec:ficheros-c3d}, un \ac{C3D} es un fichero binario que contiene la posición de diferentes marcadores en el tiempo. Por tanto, no es difícil convertir estos datos en un formato de texto legible. Se muestra en la \autoref{tab:c3d_data} un fragmento de un fichero \ac{C3D} que se ha utilizado durante el desarrollo de la aplicación convertido a una tabla:
 
@@ -73,6 +73,13 @@ El pequeño botón que aparece en la esquina superior izquierda permite cambiar 
   \label{fig:modo_claro}
 \end{figure}
 
+\subsection{Configuración del entorno} \label{sec:bevy-configuracion}
+
+Al arrancar el programa, se genera un entorno tridimensional vacío, con un plano central, una cámara y una luz. El plano central es un plano de referencia que permite al usuario orientarse en el espacio tridimensional. Tiene un tamaño de 10x10 metros, y está representado en un color verde oscuro. El foco de luz se sitúa a tres metros por encima del plano, y tiene un color frío. La cámara se sitúa a 7 metros, enfocando al centro del plano. La cámara tiene un color de fondo oscuro, y cambiar entre modo claro y ocuro varía este color.
+
+La implementación de la cámara no se basa en ningún \textit{crate} externo, sino que se ha implementado de manera manual para adaptarse al proyecto. Una cámara típicamente tiene tres variables que controlar, que son el \textit{yaw}, el \textit{pitch} y el \textit{roll}. El \textit{yaw} es la rotación de la cámara alrededor del eje vertical (Y), el \textit{pitch} es la rotación de la cámara alrededor del eje lateral (X), y el \textit{roll} es la rotación de la cámara alrededor del eje longitudinal (Z). En este caso, es necesario que el \textit{roll} sea cero, puesto que el entorno es un plano. Tanto el \textit{yaw} como el \textit{pitch} se pueden controlar pulsando el botón derecho del ratón y moviendo el ratón. Además, se puede controlar la posición de la cámara pulsando el botón izquierdo del ratón y moviendo el ratón. Esto permite al usuario moverse por el entorno tridimensional de manera intuitiva.
+
+
 \subsection{Información global} \label{sec:bevy-global}
 
 El programa almacena una serie de información a partir del \ac{C3D} cargado. Esta información se almacena en un \texttt{Resource}, que es una estructura de datos que permite gestionar y acceder a la información de manera eficiente. Esta estructura tiene el nombre de \texttt{AppState}, y contiene la información global necesaria para el funcionamiento del programa. Esta información incluye el \textit{frame} actual, el número de \textit{frames} del \ac{C3D}, el \textit{path} al fichero \ac{C3D}, el \textit{path} al fichero de configuración, la tasa de refresco del \ac{C3D}, la tasa de refresco seleccionada por el usuario, y diferentes booleanos que contienen información sobre el estado del programa, como si se está reproduciendo o no.
@@ -80,7 +87,9 @@ El programa almacena una serie de información a partir del \ac{C3D} cargado. Es
 
 \subsection{Orientación a eventos} \label{sec:bevy-eventos}
 
-Este proyecto tiene un enfoque orientado a eventos. Esto significa que el programa reacciona a los eventos que ocurren en el entorno, como la carga de un fichero o la interacción del usuario. Un evento en \textit{Bevy} es una estructura de datos que representa una acción o un cambio en el estado del programa. Estos eventos pueden ser generados por el usuario, como pulsar un botón o mover el ratón, o por el propio programa, como la carga de un fichero o la actualización de la escena. Cuando ocurre un evento, \textit{Bevy} reacciona en la siguiente iteración de su bucle interno, lo que implica que tiene efecto en la siguiente actualización de la imagen, que típicamente coincidirá con el siguiente \textit{frame}.
+Este proyecto tiene un enfoque orientado a eventos. Esto significa que el programa reacciona a los eventos que ocurren en el entorno, como la carga de un fichero o la interacción del usuario. 
+
+Un evento en \textit{Bevy} es una estructura de datos que representa una acción o un cambio en el estado del programa. Estos eventos pueden ser generados por el usuario, como pulsar un botón o mover el ratón, o por el propio programa, como la carga de un fichero o la actualización de la escena. Cuando ocurre un evento, \textit{Bevy} reacciona en la siguiente iteración de su bucle interno, lo que implica que tiene efecto en la siguiente actualización de la imagen, que típicamente coincidirá con el siguiente \textit{frame}.
 
 Los eventos definidos en este proyecto se agrupan en seis enumerados, que se reúnen en la \autoref{tab:enum-eventos}:
 
@@ -106,7 +115,7 @@ Los eventos definidos en este proyecto se agrupan en seis enumerados, que se re�
 
 Cada grupo de eventos cuenta con un orquestador encargado de tomar las acciones pertinentes dependiendo del subtipo de evento. Rust facilita el manejo de eventos de este tipo, puesto que cada grupo se codifica como un \texttt{enum}, que define diferentes variantes.
 
-En resumen, los eventos definidos en el programa se agrupan en la \autoref{tab:eventos}:
+En resumen, los eventos definidos en el programa se agrupan en la \autoref{tab:eventos}. Esta tabla resume las acciones que puede realizar un usuario al interaccionar con la aplicación.
 
 \begin{table}[H]
   \centering
@@ -139,26 +148,6 @@ En resumen, los eventos definidos en el programa se agrupan en la \autoref{tab:e
   \caption{Eventos definidos en el programa}
   \label{tab:eventos}
 \end{table}
-
-\section{Panel inferior} \label{sec:representacion-eventos}
-
-El panel inferior de la pantalla está mayormente dedicado a la representación temporal del \ac{C3D}. 
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{imagenes/panel_inf.png}
-  \caption{Panel inferior de la representación temporal del \ac{C3D}}
-  \label{fig:panel_inferior}
-\end{figure}
-
-
-Se distinguen tres filas. En la fila superior, en la parte izquierda aparece el \textit{frame} actual, representado mediante un \textit{slider}, que se puede mover para variar el \textit{frame}, y un número, ubicado justo a su derecha. Adicionalmente, a la derecha aparece otro \textit{slider} que permite ajustar la velocidad de reproducción de los eventos.
-
-La segunda fila está dedicada a los eventos del \ac{C3D} (no confundir con los eventos de \textit{Bevy}), que son un parámetro dentro del fichero \ac{C3D} que permite fijar momentos importantes en el tiempo. Los eventos se pueden utilizar para navegar a través de estos momentos clave gracias a los botones de la parte derecha, que de izquierda a derecha significan: retroceder al evento anterior, marcar el \textit{frame} actual como un evento, variar entre pausa y reproducción, avanzar al evento siguiente, eliminar eventos y eliminar los eventos marcados por el usuario, dejando solo los eventos originales del \ac{C3D}.
-
-Para diferenciar los eventos de \textit{Bevy} y los eventos del \ac{C3D}, se ha renombrado a estos últimos como \textit{milestones} (\textit{hitos}).
-
-La última fila contiene un \textit{slider} que permite variar el rango de las trazas, \todo{Añadir cosas de trazas} variar entre configuraciones y ver u ocultar vectores, que se explican a continuación.
 
 \section{Fichero de configuración \acs{TOML}}
 
@@ -304,6 +293,8 @@ En el caso del cono, solo se debe especificar el radio, que define el tamaño de
 
 En el caso del semicono, se deben especificar dos radios, que definen el tamaño de las dos circunferencias. Además, sinónimos de ``semicone'' son: ``semicono'', ``cone frustum'', ``cono truncado'', ``partial cone'', ``cono parcial'', ``truncated cone'' y ``cono truncado''.
 
+En el caso del prisma rectangular, se deben especificar dos dimensiones, que definen el tamaño de las dos bases del prisma. Además, sinónimos de ``prism'' son: ``prisma'', ``rectangular prism'', ``prisma rectangular'', ``paralelepipedo'', ``paralelepípedo'' y ``parallelepiped''.
+
 \subsection{Configuración de vectores}
 
 Los vectores son similares a los vectores de referencia explicados en \autoref{sec:bevy}. En el fichero de configuración, se definen como un punto de anclaje, una lista de elementos anclados a ese marcador, y opcionalmente una escala. Los vectores permiten representar relaciones espaciales y se pueden utilizar para definir trayectorias o movimientos en el espacio tridimensional.
@@ -344,13 +335,22 @@ Con estas modificaciones, el programa es capaz de capturar un archivo tanto en l
 
 Cuando un fichero se carga, se toman diferentes acciones, dependiendo de su tipo. Si se trata de un \ac{C3D} se eliminan todos los marcadores y se envía un evento de carga al \textit{parser} de \ac{C3D}. Este \textit{parser} se encarga de cargar el fichero y enviar un evento al programa con los datos cargados. Si se trata de un fichero de configuración, simplemente se indica al programa que debe generar nuevamente las uniones y vectores, sin necesidad de eliminar los marcadores. 
 
-\section{Representación tridimensional} 
+\section{Representación tridimensional} \label{sec:representacion-3d}
+
+La \autoref{fig:flujo} muestra un diagrama de actividad de la representación tridimensional del \ac{C3D} en un entorno de escritorio. Se puede observar como el motor paraleliza diferentes cálculos, como la clasificación de los marcadores, la generación de las uniones y generación de los vectores, así como el cálculo de la posición de las uniones y los vectores. En un entorno web no es posible la paralelización de estos cálculos, por limitaciones actuales de los navegadores en el contexto de \textit{WebAssembly}, donde todas las acciones ocurren dentro de un bucle de \textit{JavaScript}. En este caso, \textit{Bevy} decide el orden de ejecución de los cálculos.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.9\textheight, keepaspectratio]{imagenes/diagramas/general.png}
+  \caption{Diagrama de actividad de la representación del \ac{C3D} en un entorno de escritorio}
+  \label{fig:flujo}
+\end{figure}
 
 \subsection{Representación de los marcadores} \label{sec:representacion-marcadores}
 
 Los marcadores se representan como esferas, y se pueden personalizar mediante el fichero de configuración. Internamente, el programa utiliza dos estructuras de datos, una contiene el nombre del marcador y su visibilidad, y la otra es una agrupación de marcadores, siguiendo el patrón \ac{ECS} de \textit{Bevy}. Es decir, el componente \texttt{Marker} contiene el nombre del marcador y su visibilidad, mientras que el componente \texttt{C3dMarkers} es únicamente una asignación de una estructura vacía a todos los marcadores. Esto permite eliminar todos los marcadores de forma sencilla, eliminando únicamente el componente padre.
 
-Es necesario mantener en memoria todos los marcadores, incluso los que no son visibles según el fichero de configuración. Esto se debe a que el programa permite cambiar la configuración en tiempo de ejecución, y por tanto, es necesario mantener todos los marcadores en memoria para poder representarlos. Sin embargo, el programa no los representa si no son visibles, gracias a que la estructura de datos contiene la visibilidad de cada marcador\footnote{\textit{Bevy} entiende la visibilidad de cualquier entidad como un enumerado, que puede ser visible, invisible o heredado.}.
+Es necesario mantener en memoria todos los marcadores, incluso los que no son visibles según el fichero de configuración. Esto se debe a que el programa permite cambiar la configuración en tiempo de ejecución, y por tanto, es necesario mantener todos los marcadores en memoria para poder representarlos. Sin embargo, el programa no los representa si no son visibles, gracias a que la estructura de datos contiene la visibilidad de cada marcador\footnote{\textit{Bevy} entiende la visibilidad de cualquier entidad como un enumerado, que puede ser visible, invisible o heredado \autocite{VisibilityBevyRender}.}.
 
 Si se ejecuta el programa sin un fichero de configuración, se representan todos los marcadores como visibles. Esto permite comprobar que el \textit{parser} de \ac{C3D} funciona correctamente, y que se están cargando todos los marcadores. Sin embargo, no se recomienda su uso, dado que el número de marcadores puede ser elevado, y la representación muestra datos que no tienen un sentido espacial. En la \autoref{fig:marcadores} se muestra una imagen de la representación de los marcadores sin un fichero de configuración. Se puede observar que el número de marcadores es elevado, y que aparecen marcadores que no tienen un sentido espacial, como un vector de velocidad. La \autoref{fig:marcadores} resalta la importancia de la configuración, puesto que es inviable el estudio de un movimiento con un número tan elevado de marcadores. 
 
@@ -372,19 +372,145 @@ Para representar los marcadores, el programa utiliza un componente de \textit{Be
 
 La \autoref{fig:cfg-basica} muestra el mismo fichero que la \autoref{fig:marcadores}, pero filtrando la mayoría de puntos para generar un avatar.
 
+Un diagrama de actividad que explica el funcionamiento de la representación de los marcadores se puede ver en la \autoref{fig:diag-marcadores}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.9\textheight, keepaspectratio]{imagenes/diagramas/marcadores.png}
+  \caption{Diagrama de actividad sobre la representación de los marcadores}
+  \label{fig:diag-marcadores}
+\end{figure}
+
 \subsection{Representación de las uniones} \label{sec:representacion-uniones}
 
-Las uniones se representan como figuras entre marcadores. Estas figuras pueden ser de diferentes tipos, como un cilindro, un cono, un semicono o un prisma rectangular. 
+Las uniones se representan como figuras entre marcadores. Estas figuras pueden ser de diferentes tipos, como un cilindro, un cono, un semicono o un prisma rectangular.
+
+Si se considera la orientación de una unión como un objeto entre dos marcadores, y la rotación de la unión como la magnitud que determina la cara visible, existe un caso particular donde la rotación toma especial relevancia. Este es el caso de que la forma sea un prisma rectangular, ya que con un cilindro o un cono, la rotación no afecta a la representación, pues todas sus caras son iguales. En el caso del prisma rectangular, la rotación se puede determinar mediante los vectores de referencia, que son tres marcadores anclados a un marcador. 
 
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{imagenes/uniones-cilindros.png}
+  \caption{Representación de las uniones entre marcadores sin orientación}
+  \label{fig:uniones-cilindros}
+\end{figure}
 
 
-\subsection{Velocidad de reproducción}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{imagenes/uniones-prisma.png}
+  \caption{Representación de las uniones entre marcadores con orientación}
+  \label{fig:uniones-prisma}
+\end{figure}
+
+La \autoref{fig:uniones-cilindros} muestra un ejemplo de la representación de las uniones, donde no es importante la rotación de la unión, y la \autoref{fig:uniones-prisma} muestra un ejemplo de la representación de las uniones, donde sí es importante la rotación de la unión dada la forma del prisma rectangular. Además, se muestran los vectores de orientación, que se pueden ocultar, como se explica en \todo{enlace a gui}
+
+Internamente, se trata a las uniones como una estructura de datos que contiene el nombre de los dos marcadores que forman la unión, y la forma de esta. Las uniones se generan cuando se carga una configuración, y se eliminan si se cambia de configuración o se carga un nuevo \ac{C3D}. Esto permite mantener en memoria solo las uniones visibles, y además se reduce el número de cálculos necesarios para representar las uniones en cada fotograma. La \autoref{fig:diag-uniones} muestra un diagrama de actividad que explica el funcionamiento de la representación de las uniones. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/diagramas/uniones.png}
+  \caption{Diagrama de actividad sobre la representación de las uniones}
+  \label{fig:diag-uniones}
+\end{figure}
+
+\subsection{Representación de los vectores} \label{sec:representacion-vectores}
+
+Los vectores se representan como flechas que parten de un marcador, y tienen la dirección, módulo y sentido del vector, representado en el \ac{C3D} como otro marcador. Estos vectores se deben haber calculado previamente, mediante herramientas como \textit{BodyBuilder}.
+
+Si tomamos como ejemplo un punto de anclaje \texttt{OBJ1}, y su vector de velocidad \texttt{LVelOBJ1}, el programa representa una flecha que parte de \texttt{OBJ1} y tiene la dirección, módulo y sentido del vector \texttt{LVelOBJ1}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/vectores.png}
+  \caption{Representación de los vectores del \ac{C3D}}
+  \label{fig:vectores}
+\end{figure}
+
+En la \autoref{fig:vectores} se muestra un ejemplo de la representación de los vectores del \ac{C3D}. En este caso, se han representado dos vectores, \texttt{LVelOBJ2}, anclado a \texttt{OBJ2} y \texttt{WThorax}, anclado a \texttt{Thorax}. El primero de ellos representa la velocidad de \texttt{OBJ2}, y el segundo representa la velocidad angular del \texttt{Thorax}.
+
+Un diagrama de actividad que explica el funcionamiento de la representación de los vectores se puede ver en la \autoref{fig:diag-vectores}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/diagramas/vectores.png}
+  \caption{Diagrama de actividad sobre la representación de vectores}
+  \label{fig:diag-vectores}
+\end{figure}
+
+\subsection{Representación de trazas} \label{sec:representacion-trazas}
+
+Las trazas son una representación de la trayectoria de un marcador en el espacio tridimensional. Estas trazas se generan a partir de los fotogramas del \ac{C3D}, y se representan como esferas que eliminan la componente temporal. Es decir, se genera una esfera por cada fotograma y por cada marcador del que se quiere representar la traza, en un rango determinado por el doble \textit{slider} del panel inferior. 
+
+Las trazas en combinación con los vectores ilustran características básicas de la geometría, por ejemplo, si se representa la traza de un marcador y su vector de velocidad lineal, se puede observar que el vector de velocidad es tangente a la traza en cualquier punto. Además, en los puntos donde las esferas están más separadas, el módulo del vector de velocidad es mayor.
+
+En la \autoref{fig:trazas} se muestra un ejemplo de la representación de las trazas de un marcador. En este caso, se han representado las trazas del marcador \texttt{OBJ2}, y su vector de velocidad \texttt{LVelOBJ2}. Se puede observar que el vector de velocidad es tangente a la traza en el punto donde se encuentra la esfera.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/trazas.png}
+  \caption{Representación de las trazas de \texttt{OBJ2}}
+  \label{fig:trazas}
+\end{figure}
+
+Se puede incluir una traza por cada marcador del \ac{C3D}. Todas las trazas comparten el mismo color y tamaño, y el mismo rango de fotogramas, que se puede variar mediante el \textit{slider} del panel inferior. 
+
+Se debe tener en cuenta que generar una traza es una operación muy costosa en memoria y en cómputo, pues se debe recorrer el \ac{C3D} capturando el punto de interés, almacenar su valor en todos los fotogramas y generar un objeto por cada uno de estos puntos. Además, incluir demasiadas trazas suele ser contraproducente, pues genera una cantidad importante de ruido visual.
+
+\subsection{Velocidad de reproducción} \label{sec:modos-reproduccion}
 
 El programa admite dos modos de funcionamiento, velocidad fija o velocidad adaptativa. 
 
-El primer modo es ideal para el estudio de un movimiento con la mayor precisión, esto es, representando la velocidad real de la captura del movimiento, utilizando la tasa de refresco del \ac{C3D}. En caso de que la tasa de refresco de la pantalla sea inferior a la tasa de refresco del \ac{C3D}, \textit{Bevy} realiza una interpolación para que la velocidad de reproducción sea la del \ac{C3D}. Por ejemplo, para una tasa de refresco de una pantalla de 60 Hz representando un movimiento de 240 Hz, \textit{Bevy} representará uno de cada cuatro fotogramas del \ac{C3D}. Además, este modo permite variar la velocidad de reproducción, entre 0.1 y 2.0 veces la tasa de refresco del \ac{C3D}. 
+El primer modo es ideal para el estudio de un movimiento con la mayor precisión, esto es, representando la velocidad real de la captura del movimiento, utilizando la tasa de refresco del \ac{C3D}. En caso de que la tasa de refresco de la pantalla sea inferior a la tasa de refresco del \ac{C3D}, \textit{Bevy} realiza una interpolación para que la velocidad de reproducción sea la del \ac{C3D}. Por ejemplo, para una tasa de refresco de una pantalla de 60 \ac{Hz} representando un movimiento de 240 \ac{Hz}, \textit{Bevy} representará uno de cada cuatro fotogramas del \ac{C3D}. Además, este modo permite variar la velocidad de reproducción, entre 0.1 y 2.0 veces la tasa de refresco del \ac{C3D}. 
 
-Por el contrario, el segundo modo es ideal para el estudio del movimiento con la mayor calidad, es decir, sin perder información sobre los fotogramas. En este modo, no se tiene en cuenta la tasa de refresco del \ac{C3D}, \textit{Bevy} representará el fichero respetando las limitaciones del \textit{hardware}. Esto es, si se dispone de una pantalla de 60 Hz, como máximo el programa se actualizará a esta velocidad (aunque si hay un componente más restrictivo, por ejemplo una tarjeta gráfica incapaz de dar una tasa de refresco adecuada, se respetará esta limitación).
+Por el contrario, el segundo modo es ideal para el estudio del movimiento con la mayor calidad, es decir, sin perder información sobre los fotogramas. En este modo, no se tiene en cuenta la tasa de refresco del \ac{C3D}, \textit{Bevy} representará el fichero respetando las limitaciones del \textit{hardware}. Esto es, si se dispone de una pantalla de 60 \ac{Hz}, como máximo el programa se actualizará a esta velocidad (aunque si hay un componente más restrictivo, por ejemplo una tarjeta gráfica incapaz de dar una tasa de refresco adecuada, se respetará esta limitación). 
 
-% \section{Configuración de la cámara} \label{sec:cfg-camara}
+En el \autoref{apx:keyboard-shortcut} se muestra una tabla con los atajos de teclado para cambiar entre estos modos.
+
+\section{Interfaz gráfica de usuario} \label{sec:gui}
+La interfaz gráfica de usuario se ha desarrollado utilizando el \textit{crate} \texttt{bevy\_egui}, que permite crear interfaces gráficas de usuario en \textit{Bevy} utilizando la biblioteca \textit{Egui}. Esta biblioteca es compatible con \textit{WebAssembly}.
+
+La \ac{GUI} se divide en dos paneles principales, el panel inferior, dedicado al desplazamiento temporal, y el panel derecho, dedicado a la obtención de gráficas de los marcadores, para el análisis de los movimientos. 
+
+\subsection{Panel inferior} \label{sec:representacion-eventos}
+
+El panel inferior de la pantalla está mayormente dedicado a la representación temporal del \ac{C3D}. La \autoref{fig:panel_inferior} muestra el panel inferior, focalizando en la parte de la representación temporal. Además de lo mostrado en esta imagen, existe un espacio reservado para representar la ruta del fichero \ac{C3D}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/panel_inf.png}
+  \caption{Panel inferior de la representación temporal del \ac{C3D}}
+  \label{fig:panel_inferior}
+\end{figure}
+
+
+Se distinguen tres filas. En la fila superior, en la parte izquierda aparece el \textit{frame} actual, representado mediante un \textit{slider}, que se puede mover para variar el \textit{frame}, y un número, ubicado justo a su derecha. Adicionalmente, a la derecha aparece otro \textit{slider} que permite ajustar la velocidad de reproducción del \ac{C3D}. Este \textit{slider} solo aparece si se ha seleccionado el modo de velocidad fija, como se explica en la \autoref{sec:modos-reproduccion}.
+
+La segunda fila está dedicada a los eventos del \ac{C3D} (no confundir con los eventos de \textit{Bevy}), que son un parámetro dentro del fichero \ac{C3D} que permite fijar momentos importantes en el tiempo. Los eventos se pueden utilizar para navegar a través de estos momentos clave gracias a los botones de la parte derecha, que de izquierda a derecha significan: retroceder al evento anterior, marcar el \textit{frame} actual como un evento, variar entre pausa y reproducción, avanzar al evento siguiente, eliminar eventos y eliminar los eventos marcados por el usuario, dejando solo los eventos originales del \ac{C3D}.
+
+Para diferenciar los eventos de \textit{Bevy} y los eventos del \ac{C3D}, se ha renombrado a estos últimos como \textit{milestones} (\textit{hitos}).
+
+La última fila contiene un \textit{slider} que permite variar el rango de las trazas, variar entre configuraciones y ver u ocultar vectores. Cuando se pulsa cualquiera de los botones con texto, se abre un menú desplegable que permite seleccionar la configuración deseada.
+
+\subsection{Panel derecho} \label{sec:panel-derecho}
+El panel derecho de la pantalla está dedicado a la representación de gráficas de los marcadores. Dispone inicialmente de un botón que permite añadir un nuevo gráfico, y un desplegable con la configuración global de todos los gráficos. Este desplegable permite cambiar el eje X de los gráficos, teniendo opciones para representación temporal respecto al inicio de la captura, en unidades de segundo, o en unidades de fotogramas.
+
+La \autoref{fig:panel_derecho} muestra el panel derecho en su estado inicial, donde no se ha añadido ningún gráfico. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/panel-dcho.png}
+  \caption{Panel derecho de la representación de gráficas de los marcadores}
+  \label{fig:panel_derecho}
+\end{figure}
+
+Cuando se pulsa el botón de añadir gráfico, se genera una ventana emergente con información sobre todos los marcadores. Esta ventana agrupa los marcadores según la configuración en la que aparezcan, y permite añadir un gráfico por cada componente del marcador. Además, permite añadir trazas, como se puede ver en la \autoref{fig:marker_window}. En esta ventana, los marcadores se muestran en orden alfabético para facilitar la búsqueda. Esta ventana se puede minimizar o cerrar, y se puede volver a abrir en cualquier momento. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/marker-window.png}
+  \caption{Ventana emergente con información de los marcadores}
+  \label{fig:marker_window}
+\end{figure}
+
+La representación de cada una de las componentes es una proyección en 2D, donde el eje X es el tiempo, y el eje Y es la componente del marcador. Estos gráficos sirven para el estudio del movimiento, y en cada uno se representa el valor de la componente Y en la parte superior derecha.

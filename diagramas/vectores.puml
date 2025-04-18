@@ -1,0 +1,49 @@
+@startuml vectores
+skinparam Dpi 300
+
+start
+
+:Obtener asset C3d;
+
+if (¿Existe el asset C3d?) then (sí)
+  :Iterar sobre todos los vectores;
+  
+  while (¿Hay más vectores?) is (sí)
+    :Obtener posición del marcador 1 (origen);
+    :Obtener posición del marcador 2 (dirección, módulo y sentido);
+    
+    if (¿Se encontraron ambos marcadores?) then (sí)
+      note right
+        Cálculo de la representación del vector
+      end note
+      
+      :Calcular longitud del vector\nlength = 50.0 * marker2.length() * vector.2;
+      :Calcular dirección normalizada\ndirection = marker2.normalize_or_zero();
+      :Calcular posición del vector\nposition = marker1 + direction * length / 2.0;
+      :Calcular rotación\nrotation = Quat::from_rotation_arc(Vec3::Y, direction);
+      :Establecer escala\nscale = Vec3::new(1.0, length, 1.0);
+      
+      :Actualizar transform.translation;
+      :Actualizar transform.rotation;
+      :Actualizar transform.scale;
+      
+      if (¿Vector demasiado pequeño?\nmarker2.length() < 0.0005) then (sí)
+        :Establecer visibilidad como oculta\n(Visibility::Hidden);
+      else (no)
+        if (¿El vector debe ser visible?\nvectors_visibility.is_vector_visible()) then (sí)
+          :Establecer visibilidad como visible\n(Visibility::Visible);
+        else (no)
+          :Establecer visibilidad como oculta\n(Visibility::Hidden);
+        endif
+      endif
+      
+    else (no)
+      :No hacer nada;
+    endif
+  endwhile
+else (no)
+  :No hacer nada;
+endif
+
+stop
+@enduml

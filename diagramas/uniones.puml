@@ -1,0 +1,62 @@
+@startuml uniones
+skinparam Dpi 300
+' !theme plain
+' skinparam ActivityBackgroundColor LightSkyBlue
+' skinparam ActivityBorderColor Black
+' skinparam ArrowColor DarkBlue
+' skinparam NoteBorderColor DarkGray
+skinparam NoteBackgroundColor LightYellow
+
+start
+
+:Obtener estado del asset C3d;
+
+if (¿Existe el asset?) then (sí)
+  :Iterar sobre todas las uniones;
+  
+  while (¿Hay más uniones?) is (sí)
+    :Obtener posición del marcador 1;
+    :Obtener posición del marcador 2;
+    :Comprobar tipo de forma de la unión\n(y opciones de orientación);
+    
+    if (¿Se encontraron ambos marcadores?) then (sí)
+      if (¿Tiene opción de orientación?) then (sí)
+        note right
+          Caso para JoinShape::RectangularPrism
+          con opción de orientación
+        end note
+        
+        :Obtener marcadores de dirección\n(orientation_option);
+        :Calcular posición media\n(marker1 + marker2) / 2.0;
+        :Calcular longitud\n(marker1 - marker2).length();
+        :Crear matriz de rotación 3D\nbasada en los marcadores de dirección;
+        :Convertir matriz a quaternion;
+        :Establecer escala\n(0.5, longitud, 0.5);
+        
+      else (no)
+        note right
+          Caso para formas sin
+          opción de orientación
+        end note
+        
+        :Calcular posición media\n(marker1 + marker2) / 2.0;
+        :Calcular longitud\n(marker1 - marker2).length();
+        :Calcular dirección\n(marker1 - marker2).normalize();
+        :Calcular rotación con\nQuat::from_rotation_arc(Vec3::Y, dirección);
+        :Establecer escala\n(0.5, longitud, 0.5);
+      endif
+      
+      :Actualizar transform.translation;
+      :Actualizar transform.rotation;
+      :Actualizar transform.scale;
+      
+    else (no)
+      :Enviar evento para eliminar la unión\n(JoinEvent::DespawnJoinEvent);
+    endif
+  endwhile
+else (no)
+  :No hacer nada;
+endif
+
+stop
+@enduml

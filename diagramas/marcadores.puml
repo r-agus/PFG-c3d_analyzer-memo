@@ -1,0 +1,69 @@
+@startuml marcadores
+skinparam Dpi 200
+
+start
+
+:Verificar estado de renderización;
+if (¿state.render_frame == true?) then (sí)
+  :Establecer state.render_frame = false;
+endif
+
+:Obtener asset C3d;
+
+if (¿Existe el asset C3d?) then (sí)
+  :Obtener datos de puntos;
+  :Leer número de frames;
+  :Inicializar contador de marcadores i = 0;
+  
+  :Iterar sobre todos los C3dMarkers\ny sus hijos (Children);
+  note right
+    Agrupación de marcadores
+  end note
+  
+  while (¿Hay más C3dMarkers?) is (sí)
+    :Obtener los hijos del C3dMarker;
+    note right
+      Cada hijo es un marcador
+    end note
+
+    while (¿Hay más hijos?) is (sí)
+      :Intentar obtener Transform, Visibility\ny Marker del hijo;
+      
+      if (¿Se obtuvo correctamente?) then (sí)
+        note right
+          Cálculo de posición para el frame actual
+        end note
+        
+        :Leer coordenada X del punto\nx = point_data[(state.frame, i)][0] / 1000.0;
+        note right
+          Convertir a metros
+        end note
+        :Leer coordenada Y del punto\ny = point_data[(state.frame, i)][1] / 1000.0;
+        :Leer coordenada Z del punto\nz = point_data[(state.frame, i)][2] / 1000.0;
+        
+        if (¿x == 0.0 && y == 0.0 && z == 0.0?) then (sí)
+          :Establecer visibilidad como oculta\n(Visibility::Hidden);
+        else (no)
+          :Usar visibilidad predefinida del marcador\n(marker.1);
+        endif
+        
+        :Actualizar posición del transform\ntransform.translation = Vec3::new(x, y, z);
+      else (error)
+        :No hacer nada;
+      endif
+      
+      :Incrementar contador i;
+    endwhile
+  endwhile
+  
+  :Incrementar frame actual\nstate.frame += 1;
+  
+  if (¿frame >= num_frames?) then (sí)
+    :Reiniciar frame\nstate.frame = 0;
+  endif
+else (no)
+  :No hacer nada;
+endif
+
+stop
+@enduml

@@ -37,15 +37,25 @@ matches:
   - trigger: ":subsection"
     replace: "\\subsection{}"
 
+# Terminos comunes en ingles
+  - regex: "(?i)bevy"
+    replace: "\\textit{Bevy}"
+
+  - regex: "(?i)frame"
+    replace: "\\textit{frame}"
+
 # Acrónimos memoria
   - regex: "(?i)c3d"
     replace: "\\ac{C3D}"
 
-  - regex: "(?i)bevy"
-    replace: "\\textit{Bevy}"
-
   - regex: "(?i)ecs"
     replace: "\\ac{ECS}"
+
+  - regex: "(?i)gui"
+    replace: "\\ac{GUI}"
+
+  - regex: "(?i)hz"
+    replace: "\\ac{Hz}"  
 
   - regex: "(?i)json"
     replace: "\\ac{JSON}"

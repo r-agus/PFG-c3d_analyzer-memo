@@ -1,0 +1,56 @@
+@startuml general
+skinparam Dpi 300
+' !theme plain
+' skinparam ActivityBackgroundColor LightSkyBlue
+' skinparam ActivityBorderColor Black
+' skinparam ArrowColor DarkBlue
+
+start
+
+:Inicio del programa;
+
+repeat
+  :Comprobar si hay eventos pendientes;
+  
+  if (¿Hay evento de carga de nuevo fichero?) then (sí)
+    if (¿Es archivo .c3d?) then (sí)
+      :Limpiar marcadores;
+      :Limpiar uniones;
+      :Limpiar vectores;
+    elseif (¿Es archivo .toml?) then (sí)
+      :Limpiar uniones;
+      :Limpiar vectores;
+    else (otro tipo)
+      :Ignorar archivo;
+    endif
+  endif
+  
+  if (¿Hay evento de cambio de configuración?) then (sí)
+    fork
+      :Clasificar marcadores\n(visibles o no visibles);
+    fork again
+      :Generar uniones;
+    fork again
+      :Generar vectores;
+    end fork
+  endif
+  
+  ' Procesamiento de frames en cada iteración
+  :Calcular posición\nde todos los marcadores;
+  fork
+    :Calcular posición\nde uniones;
+  fork again
+    :Calcular posición\nde vectores;
+  end fork
+  
+  :Avanzar al siguiente frame;
+  
+  if (¿Es el último frame?) then (sí)
+    :Volver al primer frame;
+  endif
+  
+  :Mostrar visualización;
+
+repeat while (Programa en ejecución?)
+stop
+@enduml
