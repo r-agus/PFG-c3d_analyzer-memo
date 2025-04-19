@@ -87,13 +87,19 @@
 }
 
 % Paquetes para el manejo de la disposición de los elementos en la página
-\usepackage{float} % Para centrar las imágenes 
-\usepackage{parskip} % si no pones esto, el titulo de la portada sale mal
-% \usepackage[all]{hypcap} % Ajusta los enlaces para que apunten a la parte superior de las figuras y tablas
+\usepackage{float}
+\usepackage{parskip}
 \usepackage[hypcap=true]{caption} % hypcap esta desactualizado
-\usepackage{chngcntr} % Desvincula el contador de las figuras del contador de las secciones
-\counterwithout{figure}{chapter} % para que la numeración de las figuras no siga la de la sección en la que esta
-\usepackage{awesomebox} % Bloques de texto más molones
+\usepackage{chngcntr}
+\usepackage{listings, listings-rust}
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+\AtBeginDocument{
+    \counterwithout{lstlisting}{chapter}
+    \renewcommand{\thetable}{\arabic{table}}
+    \renewcommand{\thelstlisting}{\arabic{lstlisting}}
+}
+\usepackage{awesomebox}
 \setlength{\parskip}{0pt} % definimos la separación entre párrafos
 \setlength{\parindent}{20pt} % definimos la identación de los párrafos
 
@@ -113,7 +119,7 @@
 \usepackage{todonotes}
 \usepackage{siunitx}
 \usepackage{multirow}
-\usepackage{listings, listings-rust}
+
 \lstset{
   inputencoding=utf8,
   extendedchars=true,
@@ -125,12 +131,23 @@
 
 \providecommand{\lstlistingautorefname}{Fragmento}
 \renewcommand{\lstlistingname}{Fragmento}
+\renewcommand{\lstlistlistingname}{Índice de fragmentos de código}
 
+% \usepackage{tocloft}
+
+% Elimina el espacio extra entre capítulos/secciones en los índices
+% \setlength{\cftbeforefigskip}{0pt}
+% \setlength{\cftbeforetabskip}{0pt}
+
+
+% \usepackage{etoolbox}
+
+% % Redefinir \l@figure y \l@table para quitar el espacio entre capítulos
+% \makeatletter
+% \patchcmd{\l@figure}{\addvspace{10\p@}}{}{}{}
+% \patchcmd{\l@table}{\addvspace{10\p@}}{}{}{}
+% \makeatother
 
 % Paquetes deshabilitados
-% \usepackage{pict2e} % mejora del paquete picture. Para cosas mas complejas usar tikz
-% \usepackage{wasysym} % da conflictos con amsmath
 % \usepackage{latexsym} 
-% \usepackage[utf8]{inputenc} % ya no hace falta desde 2018
-% \usepackage{pdfpages} % Para insertar pdf en el documento
 % \usepackage[none]{hyphenat} %evitamos que rompa las palabras

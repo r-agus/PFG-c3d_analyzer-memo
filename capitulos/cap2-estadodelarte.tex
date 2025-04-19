@@ -7,7 +7,7 @@
 El \textit{Motion Capture} es una técnica que permite capturar el movimiento de un objeto en tiempo real, y representarlo en un entorno virtual. Esta técnica se utiliza en diferentes campos, como la animación, la medicina, la biomecánica o la robótica; y se basa en la captura de la posición de diferentes marcadores en el espacio. Para lograr la captura, existen diferentes tecnologías, como cámaras de vídeo, sensores inerciales, sensores de ultrasonidos, etc. \autocite{taiQueEsMotion2024}
 
 \subsection{\textit{Hardware} disponible}
-En la facultad de \ac{INEF} de la \ac{UPM}, se utiliza un sistema de Motion Capture basado en cámaras de infrarrojo, que utilizan para capturar movimientos deportivos\footnote{La facultad de INEF cuenta con 6 cámaras infrarrojas de la marca Vicon, capaces de capturar fotogramas a una frecuencia de hasta 500 \ac{Hz} \autocite{FacultadCienciasActividad}}. Estos marcadores se colocan en diferentes partes del cuerpo del deportista, logrando capturar un movimiento preciso. Los datos capturados se almacenan en un fichero en formato \ac{C3D}, que contiene la información necesaria para la representación del movimiento. \todo{Añadir mas info sobre el sistema Vicon de INEF}
+En la facultad de \ac{INEF} de la \ac{UPM}, se utiliza un sistema de Motion Capture basado en cámaras de infrarrojo, que utilizan para capturar movimientos deportivos\footnote{La facultad de INEF cuenta con 6 cámaras infrarrojas de la marca Vicon, capaces de capturar fotogramas a una frecuencia de hasta 500 \ac{Hz} \autocite{FacultadCienciasActividad}}. Estos marcadores se colocan en diferentes partes del cuerpo del deportista, logrando capturar un movimiento preciso. Los datos capturados se almacenan en un fichero en formato \ac{C3D}, que contiene la información necesaria para la representación del movimiento.
 
 Las tecnologías que existen en el mercado para la visualización de estos movimientos son muy costosas, y no siempre se adaptan a las necesidades de los investigadores. Por ello, en este proyecto se ha desarrollado una aplicación para la visualización de movimientos capturados en formato \ac{C3D}. La aplicación permite la visualización de los movimientos en un entorno tridimensional, pudiendo variar diferentes parámetros de la visualización, como la velocidad de reproducción, la posición de la cámara, la representación de los marcadores, de las uniones, vectores o fuerzas.
 
@@ -126,37 +126,32 @@ Para este proyecto, se ha decidido usar un formato estándar, con un mayor núme
 
 \ac{JSON} es un formato de serialización de datos ligero y de fácil lectura para humanos y máquinas. Originalmente derivado de JavaScript, \ac{JSON} es un fichero comúnmente utilizado en numerosos entornos por su simplicidad.
 
-Este formato utiliza una estructura basada en pares clave-valor y soporta tipos de datos básicos como números, cadenas de texto, booleanos, arrays y objetos anidados. Su sintaxis compacta y la amplia disponibilidad de bibliotecas para su procesamiento en prácticamente todos los lenguajes de programación lo han convertido en una opción popular para la configuración de aplicaciones e intercambio de datos.
+Este formato utiliza una estructura basada en pares clave-valor y soporta tipos de datos básicos como números, cadenas de texto, booleanos, listas y objetos anidados. Su sintaxis compacta y la amplia disponibilidad de bibliotecas para su procesamiento en prácticamente todos los lenguajes de programación lo han convertido en una opción popular para la configuración de aplicaciones e intercambio de datos \autocite{ECMA404}.
 
 A pesar de su popularidad, \ac{JSON} presenta algunas limitaciones como la falta de soporte nativo para comentarios y la necesidad de utilizar comillas para las claves, lo que puede reducir su legibilidad en configuraciones complejas.
-
-\todo{Referencia a JSON}
 
 \subsection{\acs{YAML}}
 
 Igual que \ac{JSON}, \ac{YAML} es un formato de serialización de datos que se utiliza comúnmente para la configuración y el intercambio de datos. Sin embargo, \ac{YAML} se diseñó con un enfoque en la legibilidad humana, utilizando sangría para definir la estructura jerárquica en lugar de llaves y corchetes.
 
-Este formato destaca por su sintaxis minimalista que elimina la mayoría de los símbolos de puntuación y permite representar datos complejos de manera clara. \ac{YAML} soporta todos los tipos de datos básicos de \ac{JSON}, pero añade características adicionales como soporte nativo para comentarios, referencias y etiquetas de tipo explícitas.
+Este formato destaca por su sintaxis minimalista que elimina la mayoría de los símbolos de puntuación y permite representar datos complejos de manera clara. \ac{YAML} soporta todos los tipos de datos básicos de \ac{JSON}, pero añade características adicionales como soporte nativo para comentarios, referencias y etiquetas de tipo explícitas \autocite{YAMLAintMarkup}.
 
-Una de las ventajas principales de \ac{YAML} es su capacidad para representar configuraciones complejas de manera concisa y legible. Es ampliamente utilizado en herramientas de infraestructura como código, configuración de aplicaciones y plataformas de contenedores como Docker y Kubernetes.
+Una de las ventajas principales de \ac{YAML} es su capacidad para representar configuraciones complejas de manera concisa y legible. Es ampliamente utilizado en herramientas de infraestructura como código, configuración de aplicaciones y plataformas de contenedores como Docker y Kubernetes \autocite{FicheroDockercomposeyml,february2024YAMLBasicsKubernetes}.
 
 Sin embargo, \ac{YAML} también presenta algunos inconvenientes, como la dependencia en la sangría que puede generar errores difíciles de detectar, y una sintaxis que en ocasiones puede resultar ambigua, especialmente en el manejo de cadenas de texto con caracteres especiales.
-
-\todo{Referencia a YAML}
 
 \subsection{\acs{TOML}}
 
 \ac{TOML} es un formato de serialización de datos diseñado para ser un lenguaje de configuración sencillo y legible. \ac{TOML} es famoso por su uso en Rust, siendo el formato oficial para los ficheros de configuración \texttt{Cargo.toml} del gestor de paquetes de Rust.
 
-Este formato se caracteriza por su sintaxis clara que recuerda a los ficheros INI pero con tipos de datos más ricos y soporte para estructuras jerárquicas. \ac{TOML} destaca por su capacidad para representar datos complejos de manera clara y sin ambigüedades, lo que lo hace ideal para configuraciones de aplicaciones.
-
-\todo{Referencia a TOML}
+Este formato se caracteriza por su sintaxis clara que recuerda a los ficheros INI pero con tipos de datos más ricos y soporte para estructuras jerárquicas. \ac{TOML} destaca por su capacidad para representar datos complejos de manera clara y sin ambigüedades, lo que lo hace ideal para configuraciones de aplicaciones \autocite{TOMLEnglishV100}.
 
 \subsection{Elección del formato de configuración}
 
 En este proyecto se ha decidido utilizar el formato \ac{TOML} para definir la configuración de representación. Este formato es sencillo y comparte similitudes con el formato MKR de Vicon. Además, \ac{TOML} es un formato de configuración ampliamente utilizado en el ecosistema de Rust, lo que da visibilidad a este lenguaje.
 
 \section{Herramientas de desarrollo}
+
 Para conseguir una aplicación gráfica eficiente, se debe de contar con una interfaz que permita a la aplicación trabajar con el hardware del dispositivo. Por tanto, es importante utilizar herramientas multiplataforma que permitan a la aplicación ser eficiente en diferentes entornos. En Rust, existen muchos \textit{crates} (unidades de compilación, ver \autocite{PackagesCratesRust}) que permiten el desarrollo de aplicaciones gráficas, como \texttt{wgpu} \autocite{WgpuPortableGraphics}, \texttt{glium} \autocite{GliumGlium2025}, \texttt{piston} \autocite{PistonModularOpen}, etc. Sin embargo, estos \textit{crates} son de muy bajo nivel, y crear una aplicación gráfica desde cero con ellos puede ser una tarea exigente en términos de tiempo. 
 
 \subsection{Bevy} \label{subsec:bevy}
@@ -174,7 +169,7 @@ La versión que este proyecto utiliza de \texttt{Bevy} es la 0.15.0, que fue la 
 
 \subsubsection{Paradigma \acs{ECS}} \label{subsec:ecs}
 
-El paradigma \ac{ECS} es un patrón arquitectónico de software que ha ganado popularidad en el desarrollo de videojuegos y simulaciones por su eficiencia y flexibilidad. Diferentes artículos, como \autocite{zaksWhenNotUse2018} mencionan que este patrón es especialmente útil para aplicaciones interactivas.
+El paradigma \ac{ECS} es un patrón arquitectónico de software que ha ganado popularidad en el desarrollo de videojuegos y simulaciones por su eficiencia y flexibilidad \autocite{prdevingDeepdivingEntityComponent2023}. Diferentes artículos, como \autocite{zaksWhenNotUse2018} mencionan que este patrón es especialmente útil para aplicaciones interactivas.
 
 A diferencia de los patrones tradicionales orientados a objetos, \ac{ECS} descompone la lógica de la aplicación en tres elementos principales \autocite{SistemaComponentesEntidad2024}:
 

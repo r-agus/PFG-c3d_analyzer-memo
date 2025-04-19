@@ -36,21 +36,48 @@ Como se ha explicado en el \autoref{sec:ficheros-c3d}, un \ac{C3D} es un fichero
   10 & 46.93 & 3.51 & 664.38 & -23.23 & -4.09 & 827.26 \\
   \bottomrule
   \end{tabular}
-  \caption{Fragmento de un fichero C3D convertido a tabla}
+  \caption{Fragmento de un fichero \acs{C3D} convertido a tabla}
   \label{tab:c3d_data}
 \end{table}
 
 Se puede observar que aparecen dos marcadores, \ac{RFIN} y \ac{RFRA}, con sus coordenadas en el espacio, representadas por los valores de las columnas \textit{x}, \textit{y} y \textit{z}, en unidades de milímetros.
 
+\section{Estructura del proyecto} \label{sec:estructura-programa}
+
+Siguiendo un principio modular, el proyecto se ha implementado en diferentes módulos, cada uno de los cuales forma un \textit{plugin}, que se integran en el módulo principal. Estos módulos son independientes entre sí, y cada uno de ellos tiene una función específica. De este modo, se consigue un código más limpio y fácil de mantener. Los módulos que se han implementado son los siguientes:
+
+\begin{itemize}
+    \item \textbf{\texttt{app\_control}:} Es el módulo principal del programa. Se encarga de la orquestación de los diferentes módulos, inicialización de recursos\footnote{Un recurso es una estructura de datos que se utiliza para almacenar información en el programa \autocite{Resources,ResourcesUnofficialBevy}.} y generación del entorno. A su vez, está compuesto por diferentes submódulos, que son:
+    \begin{itemize}
+        \item \texttt{file\_drop}: Se encarga de gestionar la carga de ficheros \ac{C3D} y de configuración. Este módulo se encarga de la carga de los ficheros, y de la creación de los eventos necesarios para la representación del \ac{C3D} en el entorno 3D.
+        \item \texttt{markers}: Se encarga de la representación de los marcadores en el entorno 3D, incluyendo su generación, actualización y eliminación.
+        \item \texttt{joins}: Se encarga de la representación de las uniones entre los marcadores en el entorno 3D, incluyendo su generación, actualización y eliminación. 
+        \item \texttt{traces}: Se encarga de la representación de las trazas de los marcadores en el entorno 3D, incluyendo su generación, actualización y eliminación.
+        \item \texttt{vectors}: Se encarga de la representación de los vectores en el entorno 3D, incluyendo su generación, actualización y eliminación.
+        \item \texttt{mouse\_keyboard}: Se encarga de la gestión de los eventos del ratón y el teclado, así como del manejo de la cámara.
+    \end{itemize}
+    \item \textbf{\texttt{bevy\_c3d\_mod}:} Es una modificación del \textit{crate} \textit{bevy\_c3d} \autocite{BiomechanicsfoundationBevy_c3d2024}. Se encarga de la lectura y generación de los \textit{assets} necesarios para la representación del \ac{C3D} en el entorno 3D. 
+    \item \textbf{\texttt{c3d\_config}:} Este módulo se encarga de la lectura del fichero de configuración y de la generación de los \textit{assets} necesarios para la carga del fichero de configuración, integrándose con el entorno de \textit{Bevy}.
+    \item \textbf{\texttt{gui}:} Este módulo se encarga de la generación de la interfaz gráfica en dos dimensiones, es decir, es un conjunto de paneles, botones y gráficos que se usan para interactuar con el entorno 3D. A su vez, este módulo se divide en diferentes submódulos, que son:
+    \begin{itemize}
+        \item \texttt{metric\_dashboard}: Se encarga de la generación de una ventana flotante que permite obtener diferentes métricas.
+        \item \texttt{milestones}: Se encarga de la lectura, representación y navegación a través de los eventos del \ac{C3D}.
+        \item \texttt{theme}: Genera un un botón para variar entre un fondo claro y oscuro en el entorno 3D. Este botón permite mejorar el contraste entre el fondo y los marcadores, y por tanto, mejorar la visibilidad de los mismos. Además, interactúa con el motor de \textit{Bevy} para capturar las cámaras y realiza este cambio de manera autónoma.
+    \end{itemize}
+    \item \textbf{\texttt{web\_bevy\_blob\_loader}:} Este módulo se basa en el \textit{crate} \textit{web\_bevy\_blob\_loader} \autocite{kayhKayhhhBevy_web_file_drop2024}, y lo modifica para adaptarlo a la última versión de \textit{Bevy}. Para ello, se ha modificado su dependencia a \textit{bevy\_blob\_loader} \autocite{kayhKayhhhBevy_blob_loader2024}, realizando una adaptación a la última versión de \textit{Bevy}.
+\end{itemize}
+
+Además de los módulos ya mencionados, se ha modificado el \textit{crate} \texttt{c3dio}, como se explica en \autoref{sec:parser-c3d}.
+
 \section{\textit{Parser} \acs{C3D}} \label{sec:parser-c3d}
-Estos datos se deben integrar con el resto del programa. Para ello, se debe contar con un \textit{parser} que convierta trate con el binario.
+Estos datos se deben integrar con el resto del programa. Para ello, se debe contar con un \textit{parser} que trate con el binario.
 
 Se ha partido del \textit{crate} de \textit{Rust} \texttt{bevy-c3d}. Este \textit{crate} utiliza a su vez el \textit{crate} \texttt{c3dio}, que es un \textit{parser} para ficheros \ac{C3D}, pero integrado a \textit{Bevy}. De este modo, se consigue un \textit{Asset} que se puede cargar en el motor de juego.
 
 Se ha modificado el \textit{crate} \texttt{c3dio} para adaptarlo a las necesidades del proyecto. En este caso, se han arreglado dos errores graves que impiden la compatibilidad con los ficheros generado por Vicon. Ambos errores se deben a modificaciones en la especificación introducidos de manera unilateral por Vicon. El primero de ellos se debe a una modificación en la especificación que cambia la manera de codificar los eventos, que hace que no se lea ningún evento del \ac{C3D}. El segundo error se debe a que Vicon elimina una restricción de la especificación, que limita el número de marcadores a 255. En este caso, Vicon permite un número ilimitado de marcadores, lo que provoca que el \textit{parser} solo reconozca los primeros 255 marcadores, y el resto no se lean.   
 
 \section{\textit{Bevy}} \label{sec:bevy}
-Este proyecto usa el motor de videojuegos \textit{Bevy} como base para generar un entorno tridimensional donde representar el \ac{C3D}. Bevy sigue el paradigma \ac{ECS}. \todo{Referencia}
+Este proyecto usa el motor de videojuegos \textit{Bevy} como base para generar un entorno tridimensional donde representar el \ac{C3D}. Bevy sigue el paradigma \ac{ECS}, separando entre entidades, componentes y sistemas. Las entidades son los objetos que se representan en el entorno tridimensional, los componentes son las propiedades de estas entidades, y los sistemas son las funciones que se aplican a estas entidades. Este paradigma permite una gran flexibilidad y escalabilidad, lo que lo hace ideal para este tipo de proyectos \autocite{prdevingDeepdivingEntityComponent2023}.
 
 Se muestra en la \autoref{fig:entorno3D} una imagen del entorno tridimensional creado con Bevy, antes de cargar el \ac{C3D}.
 
@@ -342,7 +369,7 @@ La \autoref{fig:flujo} muestra un diagrama de actividad de la representación tr
 \begin{figure}[H]
   \centering
   \includegraphics[height=0.9\textheight, keepaspectratio]{imagenes/diagramas/general.png}
-  \caption{Diagrama de actividad de la representación del \ac{C3D} en un entorno de escritorio}
+  \caption{Diagrama de actividad de la representación del \acs{C3D} en un entorno de escritorio}
   \label{fig:flujo}
 \end{figure}
 
@@ -357,7 +384,7 @@ Si se ejecuta el programa sin un fichero de configuración, se representan todos
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{imagenes/marcadores.png}
-  \caption{Representación de marcadores del \ac{C3D} sin un fichero de configuración}
+  \caption{Representación de marcadores del \acs{C3D} sin un fichero de configuración}
   \label{fig:marcadores}
 \end{figure}
 
@@ -366,7 +393,7 @@ Para representar los marcadores, el programa utiliza un componente de \textit{Be
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{imagenes/config-basica.png}
-  \caption{Representación de marcadores del \ac{C3D} con un fichero de configuración}
+  \caption{Representación de marcadores del \acs{C3D} con un fichero de configuración}
   \label{fig:cfg-basica}
 \end{figure}
 
@@ -387,10 +414,11 @@ Las uniones se representan como figuras entre marcadores. Estas figuras pueden s
 
 Si se considera la orientación de una unión como un objeto entre dos marcadores, y la rotación de la unión como la magnitud que determina la cara visible, existe un caso particular donde la rotación toma especial relevancia. Este es el caso de que la forma sea un prisma rectangular, ya que con un cilindro o un cono, la rotación no afecta a la representación, pues todas sus caras son iguales. En el caso del prisma rectangular, la rotación se puede determinar mediante los vectores de referencia, que son tres marcadores anclados a un marcador. 
 
+La \autoref{fig:uniones-cilindros} muestra un ejemplo de la representación de las uniones, donde no es importante la rotación de la unión, y la \autoref{fig:uniones-prisma} muestra un ejemplo de la representación de las uniones, donde sí es importante la rotación de la unión dada la forma del prisma rectangular. Además, se muestran los vectores de orientación, que se pueden ocultar, como se explica en \autoref{sec:panel-inferior}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{imagenes/uniones-cilindros.png}
+  \includegraphics[width=0.8\textwidth]{imagenes/uniones-cilindros.png}
   \caption{Representación de las uniones entre marcadores sin orientación}
   \label{fig:uniones-cilindros}
 \end{figure}
@@ -398,12 +426,11 @@ Si se considera la orientación de una unión como un objeto entre dos marcadore
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{imagenes/uniones-prisma.png}
+  \includegraphics[width=0.8\textwidth]{imagenes/uniones-prisma.png}
   \caption{Representación de las uniones entre marcadores con orientación}
   \label{fig:uniones-prisma}
 \end{figure}
 
-La \autoref{fig:uniones-cilindros} muestra un ejemplo de la representación de las uniones, donde no es importante la rotación de la unión, y la \autoref{fig:uniones-prisma} muestra un ejemplo de la representación de las uniones, donde sí es importante la rotación de la unión dada la forma del prisma rectangular. Además, se muestran los vectores de orientación, que se pueden ocultar, como se explica en \todo{enlace a gui}
 
 Internamente, se trata a las uniones como una estructura de datos que contiene el nombre de los dos marcadores que forman la unión, y la forma de esta. Las uniones se generan cuando se carga una configuración, y se eliminan si se cambia de configuración o se carga un nuevo \ac{C3D}. Esto permite mantener en memoria solo las uniones visibles, y además se reduce el número de cálculos necesarios para representar las uniones en cada fotograma. La \autoref{fig:diag-uniones} muestra un diagrama de actividad que explica el funcionamiento de la representación de las uniones. 
 
@@ -423,7 +450,7 @@ Si tomamos como ejemplo un punto de anclaje \texttt{OBJ1}, y su vector de veloci
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{imagenes/vectores.png}
-  \caption{Representación de los vectores del \ac{C3D}}
+  \caption{Representación de los vectores del \acs{C3D}}
   \label{fig:vectores}
 \end{figure}
 
@@ -472,14 +499,14 @@ La interfaz gráfica de usuario se ha desarrollado utilizando el \textit{crate} 
 
 La \ac{GUI} se divide en dos paneles principales, el panel inferior, dedicado al desplazamiento temporal, y el panel derecho, dedicado a la obtención de gráficas de los marcadores, para el análisis de los movimientos. 
 
-\subsection{Panel inferior} \label{sec:representacion-eventos}
+\subsection{Panel inferior} \label{sec:panel-inferior}
 
 El panel inferior de la pantalla está mayormente dedicado a la representación temporal del \ac{C3D}. La \autoref{fig:panel_inferior} muestra el panel inferior, focalizando en la parte de la representación temporal. Además de lo mostrado en esta imagen, existe un espacio reservado para representar la ruta del fichero \ac{C3D}.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{imagenes/panel_inf.png}
-  \caption{Panel inferior de la representación temporal del \ac{C3D}}
+  \caption{Panel inferior de la representación temporal del \acs{C3D}}
   \label{fig:panel_inferior}
 \end{figure}
 
@@ -521,7 +548,7 @@ Además, se puede eliminar el gráfico pulsando el botón de eliminar gráfico, 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{imagenes/graficos.png}
-  \caption{Representación de gráficos en la \ac{GUI}}
+  \caption{Representación de gráficos en la \acs{GUI}}
   \label{fig:panel_dcho_con_graficos}
 \end{figure}
 
