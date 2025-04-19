@@ -499,7 +499,7 @@ La \autoref{fig:panel_derecho} muestra el panel derecho en su estado inicial, do
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{imagenes/panel-dcho.png}
+  \includegraphics[width=0.3\textwidth]{imagenes/panel-dcho.png}
   \caption{Panel derecho de la representación de gráficas de los marcadores}
   \label{fig:panel_derecho}
 \end{figure}
@@ -508,9 +508,54 @@ Cuando se pulsa el botón de añadir gráfico, se genera una ventana emergente c
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{imagenes/marker-window.png}
+  \includegraphics[width=0.3\textwidth]{imagenes/markers-window.png}
   \caption{Ventana emergente con información de los marcadores}
   \label{fig:marker_window}
 \end{figure}
 
 La representación de cada una de las componentes es una proyección en 2D, donde el eje X es el tiempo, y el eje Y es la componente del marcador. Estos gráficos sirven para el estudio del movimiento, y en cada uno se representa el valor de la componente Y en la parte superior derecha.
+
+Cuando se añade un gráfico, este se añade al panel derecho, en la posición que le corresponda siguiendo el orden alfabético, y se puede redimensionar. 
+Además, se puede eliminar el gráfico pulsando el botón de eliminar gráfico, que aparece en la parte superior derecha del gráfico. En la \autoref{fig:panel_dcho_con_graficos} se muestra un ejemplo de la representación de gráficos, donde se han añadido los gráficos de las componentes X, Y y Z del marcador \texttt{OBJ1}. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/graficos.png}
+  \caption{Representación de gráficos en la \ac{GUI}}
+  \label{fig:panel_dcho_con_graficos}
+\end{figure}
+
+A modo de ejemplo, se incluye la \autoref{fig:estudio_posicion}, donde se hace énfasis en un momento donde un jugador de golf está realizando un movimiento de golpeo.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagenes/estudio_posicion.png}
+  \caption{Estudio de un movimiento}
+  \label{fig:estudio_posicion}
+\end{figure}
+
+En este instante, el palo se encuentra en una posición tal que la componente X de la velocidad lineal es cero, y las componentes Y y Z son negativas, con un módulo elevado. Se puede comprobar en los gráficos que la componente X de la posición se encuentra en un mínimo, es decir, en este punto no presenta variación, y las componentes Y y Z se encuentran en un momento de variación muy elevado, es decir, con mucha pendiente.
+
+En las figuras anteriores, se puede observar que en el gráfico se marca el pasado con un color verde, y el futuro con un color rojo. La intersección de ambos indica de forma clara el momento actual. Además, en la \autoref{fig:panel_dcho_con_graficos} se puede observar que el panel derecho ocupa un mayor porcentaje de la pantalla que en la \autoref{fig:estudio_posicion}. Como la primera tiene más espacio, se puede añadir información adicional, como marcas en el eje X para disponer de mayores referencias temporales. 
+
+\subsection{Implementación} \label{sec:implementacion-gui}
+
+Siguiendo el enfoque modular del resto del proyecto, la \ac{GUI} se ha implementado como un \textit{plugin} de \textit{Bevy}, que se puede añadir o eliminar en cualquier momento. Esto permite mantener la \ac{GUI} separada del resto del código, y facilita su mantenimiento y evolución.
+
+La \ac{GUI} se ha implementado utilizando el \textit{crate} \texttt{bevy\_egui}, que permite crear interfaces gráficas de usuario en \textit{Bevy} utilizando la biblioteca \textit{Egui}.  
+
+Al arrancar la aplicación, se carga el \textit{plugin} de la \ac{GUI}, que se encarga de crear la ventana y los paneles. La interacción con el resto del programa se realiza mediante eventos de \textit{Bevy}. 
+
+El panel inferior, denominado \texttt{Timeline}, se divide en tres columnas. 
+
+La primera columna contiene una caja con la ruta del fichero \ac{C3D}. El texto de esta caja no se puede modificar, es solo informativo. Cuando se carga un fichero, se actualiza el texto de esta caja, que en la versión de escritorio es una ruta del sistema de ficheros, mientras que en la versión web es una \textit{Blob URL}. 
+
+La columna central ocupa la mitad del ancho disponible, por ser la principal. A su vez, está dividida en tres filas, donde la primera contiene un \textit{slider} con un estilo modificado, ya que se ha modificado el asa para que sea rectangular, con una proporción de 1:10. La segunda fila está dedicada a los eventos del \ac{C3D} que se representan como líneas verticales a la altura del \textit{frame} donde se encuentran. Estas líneas se han implementado como un gráfico de \texttt{egui\_plot}, que es una librería de gráficos para \textit{Egui}. La tercera fila contiene un \textit{slider} con dos asas, para controlar el rango de fotogramas de las trazas \autocite{hacknusHacknusEgui_double_slider2025}.
+
+Por último, la columna derecha contiene botones de control general. Esta columna también se divide en tres filas. La primera fila muestra el \textit{frame} actual, y, en caso de que el modo de reproducción sea de velocidad fija, un \textit{slider} para controlar la velocidad de reproducción. La segunda fila contiene seis botones, de izquierda a derecha: retroceder al evento anterior, marcar el \textit{frame} actual como un evento, variar entre pausa y reproducción, avanzar al evento siguiente, eliminar eventos y eliminar los eventos marcados por el usuario. Por último, la tercera fila contiene tres botones, que permiten cambiar entre configuraciones del fichero de configuración cargado, eliminar todas las trazas y ver u ocultar los vectores.
+
+El panel derecho, denominado \texttt{MetricsDashboard}, contiene un botón que permite añadir un nuevo gráfico, y un desplegable con la configuración global de todos los gráficos. Cuando se pulsa el botón de añadir gráfico, se genera una ventana emergente que permite añadir nuevos gráficos. Internamente, se almacena una estructura de datos que contiene un mapa con el identificador del gráfico (que coincide con el nombre del marcador y la coordenada), y el gráfico en sí, que está compuesto por dos vectores. El primero de ellos representa todos los puntos de la gráfica (se visualiza en color rojo), y el segundo almacena los puntos que se han representado en el pasado (se visualiza en color verde). También se almacena la escala que el usuario decida usar (tiempo o fotogramas). De este modo, para eliminar un gráfico, tan solo se debe eliminar del mapa.
+
+Esta configuración admite tantos gráficos como componentes de marcadores en el \ac{C3D} (tres veces el numero de marcadores). Por tanto, para poder navegar entre gráficos, el panel derecho es un panel deslizante, que se puede desplazar hacia arriba y hacia abajo. Además, cada gráfico tiene un botón de eliminar gráfico, que permite eliminar el gráfico de forma sencilla.
+
+El último componente de la \ac{GUI} es un pequeño botón que permite cambiar el color de fondo de la aplicación, alternando entre un modo claro y un modo oscuro. Este botón se encuentra en la parte superior izquierda de la pantalla, y se puede pulsar en cualquier momento. Este botón muestra el símbolo de un sol o una luna, dependiendo del modo de color actual. Este botón no afecta a la representación del \ac{C3D}, solo cambia el color de fondo de la aplicación, y es independiente del resto de la \ac{GUI}. La implementación hace una consulta a \textit{Bevy} sobre las cámaras que se están utilizando, y cambia el color de estas de manera autónoma. 

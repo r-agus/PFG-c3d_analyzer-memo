@@ -60,6 +60,14 @@ El lenguaje de programación Rust es un lenguaje de programación innovador que 
 
 Rust dispone de características modernas, como un gestor de paquetes para la gestión de dependencias, llamado Cargo, y compilación nativa a WebAssembly, lo que permite la ejecución de código Rust en un navegador web \autocite{WebAssembly}.
 
+\subsubsection{WebAssembly y wasm-bindgen}
+
+WebAssembly (WASM) es un formato binario de bajo nivel diseñado como destino de compilación para lenguajes de alto nivel, permitiendo ejecutar código con un rendimiento cercano al nativo en navegadores web \autocite{WebAssembly}. Rust es uno de los lenguajes con mejor soporte para WASM, gracias a su sistema de tipos y gestión de memoria sin recolector de basura.
+
+La herramienta \texttt{wasm-bindgen} \autocite{IntroductionWasmbindgenGuide} facilita la interoperabilidad entre Rust y JavaScript, permitiendo el intercambio de datos complejos entre ambos lenguajes. Esta biblioteca automatiza gran parte del trabajo necesario para la comunicación entre el código Rust compilado a WASM y el entorno JavaScript del navegador, resolviendo una de las limitaciones mencionadas anteriormente: la falta de acceso directo al DOM.
+
+Con \texttt{wasm-bindgen}, es posible exponer funciones Rust a JavaScript y viceversa, trabajar con tipos de JavaScript desde Rust, y manipular el DOM a través de interfaces que resultan naturales para los programadores de Rust. Esto hace que el desarrollo de aplicaciones web con Rust sea una alternativa viable y eficiente a JavaScript puro, especialmente para componentes que requieren alto rendimiento o seguridad de memoria.
+
 \subsection{Otras herramientas consideradas}
 \subsubsection{Unity}
 Unity es un motor de videojuegos multiplataforma, que permite el desarrollo de videojuegos en 2D y 3D. Unity es un motor de videojuegos muy popular, que se puede utilizar también como herramienta crear simulaciones, que es el propósito de este proyecto. Unity dispone de una gran cantidad de herramientas y bibliotecas, que facilitan el desarrollo de aplicaciones de todo tipo. Sin embargo, Unity es un motor de videojuegos pesado, que consume muchos recursos, y que no es especialmente eficiente en términos de rendimiento, sobre todo en entornos web.
@@ -164,5 +172,62 @@ Otro aspecto destacado de \texttt{Bevy} es que se basa en el patrón de diseño 
 
 La versión que este proyecto utiliza de \texttt{Bevy} es la 0.15.0, que fue la versión más reciente al momento de la implementación del proyecto.
 
+\subsubsection{Paradigma \acs{ECS}} \label{subsec:ecs}
 
-% wasm y wasm bindgen, Blob URL
+El paradigma \ac{ECS} es un patrón arquitectónico de software que ha ganado popularidad en el desarrollo de videojuegos y simulaciones por su eficiencia y flexibilidad. Diferentes artículos, como \autocite{zaksWhenNotUse2018} mencionan que este patrón es especialmente útil para aplicaciones interactivas.
+
+A diferencia de los patrones tradicionales orientados a objetos, \ac{ECS} descompone la lógica de la aplicación en tres elementos principales \autocite{SistemaComponentesEntidad2024}:
+
+\begin{itemize}
+    \item \textbf{Entidades:} Son identificadores únicos que representan objetos en el mundo virtual. En sí mismas, las entidades no contienen datos ni comportamiento, funcionando más bien como contenedores lógicos para componentes.
+    
+    \item \textbf{Componentes:} Son estructuras de datos puras que contienen solo propiedades, sin comportamiento asociado. Cada componente representa un aspecto específico de una entidad (posición, renderizado, física, etc.). Una entidad puede tener múltiples componentes, siguiendo el principio de composición sobre herencia.
+    
+    \item \textbf{Sistemas:} Contienen la lógica que procesa entidades con combinaciones específicas de componentes. Cada sistema opera sobre un conjunto de componentes de forma independiente, realizando transformaciones en los datos.
+\end{itemize}
+
+En el contexto de Bevy, el paradigma \ac{ECS} se implementa de manera eficiente mediante un concepto adicional: los \textit{recursos}. Estos son datos globales accesibles por los sistemas sin estar asociados a entidades específicas. \textit{Bevy} también implementa un sistema de eventos que permite la comunicación entre sistemas sin acoplarlos directamente.
+
+\subsection{EGUI} \label{subsec:egui}
+
+Las aplicaciones de escritorio suelen implementar una \ac{GUI} que permite al usuario interactuar con la aplicación. Los \textit{frameworks} más utilizados para la creación de una \ac{GUI} son Qt \autocite{Theqtstory}, que se ha usado para crear aplicaciones famosas como el popular reproductor de vídeo y música VLC \autocite{QtGTKVideoLAN}, o GTK, que es el \textit{framework} utilizado por el entorno de escritorio GNOME, o el editor de fotografías GIMP. 
+
+Pese a que estos \textit{frameworks} están escritos en C/C++, tienen \textit{bindings} a otros lenguajes de programación, como Rust. Sin embargo, para este proyecto se ha decidido utilizar un motor de videojuegos para facilitar el cálculo de la física y la representación gráfica. Por tanto, se ha decidido utilizar un \textit{framework} de \ac{GUI} que esté escrito en Rust y que sea compatible con \texttt{Bevy}. 
+
+Un ejemplo de este tipo de \textit{frameworks} es \texttt{egui}, que es una biblioteca gráfica escrita en Rust, y que dispone compilación nativa a WebAssembly. Así, la misma \ac{GUI} es válida tanto para la aplicación de escritorio como para la versión web \autocite{ernerfeldtEmilkEgui2025}.
+
+Adicionalmente, existe una adaptación de \texttt{egui} para \texttt{Bevy}, que permite la integración de la \ac{GUI} con el motor de videojuegos. Esta adaptación se llama \texttt{bevy\_egui} \autocite{Bevy_eguiRust}. 
+
+\subsection{Arquitectura orientada a eventos} \label{subsec:eventos}
+
+La arquitectura orientada a eventos es un patrón de diseño que organiza el flujo de un sistema en torno a la producción, detección y consumo de eventos, en lugar de seguir una secuencia lineal de instrucciones. Un evento representa un cambio en el estado del sistema o una señal externa que requiere atención \autocite{SistemaComponentesEntidad2024}.
+
+En este patrón arquitectónico se identifican tres componentes principales:
+\begin{itemize}
+    \item \textbf{Emisores de eventos:} Entidades que generan y publican eventos cuando ocurre un cambio relevante en su estado o cuando detectan alguna condición específica.
+    
+    \item \textbf{Canales de eventos:} Infraestructura que permite transportar los eventos desde los emisores hasta los consumidores, pudiendo incluir colas, buses de eventos o mecanismos de publicación/suscripción.
+    
+    \item \textbf{Consumidores de eventos:} Componentes que reciben eventos y ejecutan lógica específica en respuesta a ellos, pudiendo a su vez generar nuevos eventos.
+\end{itemize}
+
+Esta arquitectura ofrece numerosas ventajas para aplicaciones interactivas, como:
+
+\begin{itemize}
+    \item \textbf{Acoplamiento débil:} Los emisores y consumidores de eventos no necesitan conocerse entre sí, lo que facilita el desarrollo y el mantenimiento de componentes individuales.
+    
+    \item \textbf{Escalabilidad:} Cada sistema puede reaccionar a múltiples eventos, siendo especialmente útil para aplicaciones con interfaces gráficas complejas o procesamiento asíncrono.
+    
+    \item \textbf{Reactividad:} Permite responder rápidamente a cambios en el estado de la aplicación o a acciones del usuario, relevante en los sistemas interactivos.
+    
+    \item \textbf{Extensibilidad:} Nuevas funcionalidades pueden añadirse creando nuevos consumidores de eventos existentes, sin modificar los componentes existentes.
+\end{itemize}
+
+\texttt{Bevy} implementa un sistema de eventos robusto que se integra perfectamente con su arquitectura \ac{ECS}. Los eventos en \texttt{Bevy} son estructuras de datos tipados que pueden ser enviados a través de un sistema de colas gestionado por el motor. Los sistemas pueden registrarse como receptores de tipos específicos de eventos y procesar solo aquellos relevantes para su funcionamiento \autocite{EventsBevyPrelude,EventsUnofficialBevy}. Esto permite una clara separación entre subsistemas mientras se mantiene un flujo de datos coherente.
+
+\subsection{Fundamentos de representación 3D}
+
+La representación tridimensional se basa en varios conceptos fundamentales. Las primitivas geométricas constituyen los elementos básicos utilizados para construir otros objetos complejos. Estos elementos se sitúan en sistemas de coordenadas cartesianas donde, por convenio, suele establecerse el eje Y vertical (contra la gravedad), aunque estas convenciones pueden variar entre diferentes aplicaciones.
+
+La manipulación espacial de estos elementos requiere transformaciones geométricas (traslación, rotación y escalado), esenciales para posicionar correctamente los elementos a lo largo del tiempo. La percepción visual de estos elementos se consigue mediante técnicas de iluminación y asignación de materiales, que determinan características como el color o brillo. La selección adecuada de estos atributos mejora la percepción de profundidad y facilita la distinción entre diferentes elementos.
+
