@@ -17,12 +17,8 @@ jobs:
 
       - name: ⚙️ Instalar TeX Live
         run: |
-            sudo apt-get update
-            sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended latexmk
-            sudo apt-get install -y texlive-full biber latexmk
-            latexmk -pdf -interaction=nonstopmode main.tex
-            bibtex main
-            latexmk -pdf -interaction=nonstopmode main.tex
+          sudo apt-get update
+          sudo apt-get install -y texlive-full biber latexmk
 
       - name: 📄 Compilar con latexmk
         run: |
