@@ -2,6 +2,7 @@
 
 \noindent El estudio del movimiento del cuerpo humano es una tarea compleja, que requiere de amplios conocimientos en el sector de la biomecánica, y herramientas específicas para su análisis. En este sentido, el sistema de captura de movimiento, conocido como \ac{MoCap}, es una herramienta fundamental para el estudio del movimiento humano \autocite{taiQueEsMotion2024}.
 
+Durante este capítulo se presenta el estado del arte de la tecnología de captura de movimiento, y se analizan las diferentes herramientas que existen en el mercado para la visualización de los datos obtenidos. A continuación, se presenta el formato de fichero \ac{C3D}, que es el formato utilizado para almacenar los datos obtenidos por el sistema de captura de movimiento. Por último, se presentan los diferentes lenguajes de programación valorados para el desarrollo del proyecto, y se justifica la elección del mismo.
 
 \section{Sistemas \textit{Motion Capture}}
 El \textit{Motion Capture} es una técnica que permite capturar el movimiento de un objeto en tiempo real, y representarlo en un entorno virtual. Esta técnica se utiliza en diferentes campos, como la animación, la medicina, la biomecánica o la robótica; y se basa en la captura de la posición de diferentes marcadores en el espacio. Para lograr la captura, existen diferentes tecnologías, como cámaras de vídeo, sensores inerciales, sensores de ultrasonidos, etc. \autocite{taiQueEsMotion2024}
@@ -32,7 +33,36 @@ Un fichero \ac{C3D} es un fichero binario que contiene toda la información de l
 
 Es importante señalar que el formato \ac{C3D} contiene información de objetos con coordenadas tridimensionales, pero estos objetos no tienen por qué ser marcadores. Por ejemplo, en el fichero \ac{C3D} se pueden almacenar diferentes tipos de objetos, como marcadores, vectores, fuerzas, etc. Por tanto, es importante entender el formato \ac{C3D} para poder extraer la información necesaria para la representación del movimiento. Además, es necesaria una herramienta para filtrar la información que se quiere representar, ya que un fichero \ac{C3D} puede contener miles de objetos, y no todos ellos son relevantes para la representación del movimiento.
 
-Existen diferentes \textit{parsers} que permiten la lectura de estos ficheros, y la extracción de la información necesaria para la representación del movimiento. En este proyecto se ha modificado el \textit{crate} \texttt{c3dio}, que permite la lectura de ficheros \ac{C3D} en Rust, y tiene un \textit{plugin} para \texttt{Bevy} que facilita la integración con el motor de videojuegos, que se explica en el \autoref{subsec:bevy}.
+Existen diferentes \textit{parsers} que permiten la lectura de estos ficheros, y la extracción de la información necesaria para la representación del movimiento. En este proyecto se ha modificado el \textit{crate} \texttt{c3dio}, que permite la lectura de ficheros \ac{C3D} en Rust, y tiene un \textit{plugin} para \texttt{Bevy} que facilita la integración con el motor de videojuegos, que se explica en el \autoref{subsec:bevy}. Adicionalmente, con la herramienta explicada en el \autoref{apx:c3d_latex_py}, se puede convertir un fragmento de un fichero \ac{C3D} a un formato leíble por humanos. Se muestra en la \autoref{tab:c3d_data} un fragmento de un fichero \ac{C3D} utilizado durante el desarrollo de la aplicación, que contiene información sobre los primeros diez fotogramas de la captura de movimiento, para dos marcadores, \ac{RFIN} y \ac{RFRA}.
+
+\begin{table}[htbp]
+    \centering
+    \setlength{\tabcolsep}{5pt}
+    \renewcommand{\arraystretch}{1.2}
+    \rowcolors{3}{white}{gray!10}
+    \begin{tabular}{r|S[table-format=-3.2]S[table-format=-3.2]S[table-format=-3.2]|S[table-format=-3.2]S[table-format=-3.2]S[table-format=-3.2]}
+    \toprule
+    \multirow{2}{*}{\textbf{Frame}} & \multicolumn{3}{c|}{RFIN                          } & \multicolumn{3}{c}{RFRA                          } \\
+      & {\textbf{x}} & {\textbf{y}} & {\textbf{z}} & {\textbf{x}} & {\textbf{y}} & {\textbf{z}} \\
+    \midrule
+    1 & 46.80 & 3.25 & 664.41 & -23.14 & -4.06 & 827.33 \\
+    2 & 46.80 & 3.25 & 664.41 & -23.14 & -4.07 & 827.30 \\
+    3 & 46.80 & 3.25 & 664.41 & -23.14 & -4.08 & 827.30 \\
+    4 & 46.80 & 3.25 & 664.41 & -23.14 & -4.07 & 827.30 \\
+    5 & 46.80 & 3.25 & 664.41 & -23.15 & -4.06 & 827.31 \\
+    \midrule
+    6 & 46.80 & 3.25 & 664.41 & -23.16 & -4.03 & 827.33 \\
+    7 & 46.81 & 3.25 & 664.41 & -23.18 & -4.00 & 827.35 \\
+    8 & 46.82 & 3.28 & 664.40 & -23.21 & -3.99 & 827.36 \\
+    9 & 46.87 & 3.36 & 664.40 & -23.23 & -4.02 & 827.33 \\
+    10 & 46.93 & 3.51 & 664.38 & -23.23 & -4.09 & 827.26 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Fragmento de un fichero \acs{C3D} convertido a tabla}
+    \label{tab:c3d_data}
+\end{table}
+  
+Se puede observar que aparecen los dos marcadores mencionados, junto con sus coordenadas en el espacio, representadas por los valores de las columnas \textit{x}, \textit{y} y \textit{z}, en unidades de milímetros.
 
 \subsection{Herramientas actuales para la visualización de ficheros \acs{C3D}}
 
@@ -42,23 +72,31 @@ Las herramientas actuales que existen en el mercado para la visualización de un
 
 \section{Lenguaje de programación}
 
-Como se explica en el \autoref{sec:ficheros-c3d}, un fichero \ac{C3D} contiene toda la información de la posición de los marcadores a lo largo de la grabación del movimiento. Una frecuencia de muestreo típica en este tipo de ficheros es de 250 \ac{Hz}, lo que significa que se captura la posición de los marcadores 250 veces por segundo. Adicionalmente, al fichero \ac{C3D} se le añaden puntos calculados, que pueden ser articulaciones entre dos marcadores reales, vectores de velocidad, aceleraciones, etc. Por tanto, es común que un fichero \ac{C3D} contenga miles de puntos, lo que hace que la visualización de estos movimientos sea una tarea compleja y exigente en términos de rendimiento.  
+Un aspecto importante para este proyecto es la elección del lenguaje de programación. Al ser un proyecto que no hereda de ningún otro, hay libertad para elegir el lenguaje de programación que se considere más adecuado. Sin embargo, elegir un buen lenguaje de programación es fundamental para el éxito del proyecto, ya que un lenguaje de programación inadecuado puede hacer que el proyecto sea difícil de mantener y de escalar.
 
-Adicionalmente, en el planteamiento del proyecto, se especificó que debían existir dos versiones, una de escritorio y una versión web. Con estas premisas, se han valorado diferentes lenguajes de programación para el desarrollo de la aplicación.  
+Como se explica en el \autoref{sec:ficheros-c3d}, un fichero \ac{C3D} contiene toda la información de la posición de los marcadores a lo largo de la grabación del movimiento. Una frecuencia de muestreo típica en este tipo de ficheros es de 250 \ac{Hz}, lo que significa que se captura la posición de los marcadores 250 veces por segundo. Adicionalmente, al fichero \ac{C3D} se le añaden puntos calculados, que pueden ser articulaciones entre dos marcadores reales, vectores de velocidad, aceleraciones, etc. Por tanto, es común que un fichero \ac{C3D} contenga miles de puntos, lo que hace que la visualización de estos movimientos sea una tarea compleja y exigente en términos de rendimiento.
+
+Adicionalmente, en el planteamiento del proyecto, se especificó que debían existir dos versiones, una de escritorio y una versión web, bajo el mismo código fuente. Esto implica que el mismo código fuente debe poder ser compilado a los sistemas operativos mayoritarios, y además debe poder ser ejecutada en un entorno web. Con estas premisas, se han valorado diferentes lenguajes de programación para el desarrollo de la aplicación.  
 
 \subsection{JavaScript}
-JavaScript es un lenguaje de programación interpretado, que se ha convertido en el estándar para el desarrollo de aplicaciones web. Este lenguaje es eficiente y rápido, gracias a optimizaciones en los motores de JavaScript, como SpiderMonkey de Mozilla o V8 de Google \autocite{srinetChromeV8Firefox2022}. Para el desarrollo de aplicaciones de escritorio, JavaScript se puede utilizar con diferentes tecnologías, como Electron \autocite{BuildCrossplatformDesktop}, que permite la creación de aplicaciones de escritorio multiplataforma con tecnologías web. Pese a esto, el mayor problema de JavaScript es el rendimiento, ya que este lenguaje no dispone de características de bajo nivel, como la gestión de memoria o la programación concurrente \autocite{MemoryManagementJavaScript2025,pengMultithreadingJavascript2017}.
+JavaScript es un lenguaje de programación interpretado, que se ha convertido en el estándar para el desarrollo de aplicaciones web. Este lenguaje está muy optimizado, gracias a avances en los motores de JavaScript, como SpiderMonkey de Mozilla o V8 de Google \autocite{srinetChromeV8Firefox2022}. Para el desarrollo de aplicaciones de escritorio, JavaScript se puede utilizar con diferentes tecnologías, como Electron \autocite{BuildCrossplatformDesktop}, que permite la creación de aplicaciones de escritorio multiplataforma con tecnologías web. 
+
+Pese a esto, el mayor problema de JavaScript es el rendimiento, ya que este lenguaje no dispone de características de bajo nivel, como la gestión de memoria o la programación concurrente \autocite{MemoryManagementJavaScript2025,pengMultithreadingJavascript2017}. Por tanto, JavaScript no es un lenguaje de programación adecuado para el desarrollo de aplicaciones que requieren un alto rendimiento, como es el caso de la visualización de movimientos en 3D.
 
 \subsection{Python}
-Python es un lenguaje de programación interpretado, que se ha convertido en uno de los lenguajes de programación más populares en la actualidad \autocite{TIOBEIndex}. Python es un lenguaje de programación de tipado dinámico, que permite la inferencia de tipos, y que garantiza la seguridad de la memoria en tiempo de ejecución. Python es un lenguaje de programación muy versátil, que se utiliza en diferentes campos, como la inteligencia artificial, el análisis de datos, la programación web, etc. Además, dispone de una gran cantidad de bibliotecas y frameworks, que facilitan el desarrollo de aplicaciones de todo tipo. Sin embargo, Python no es un lenguaje de programación especialmente rápido, ya que es un lenguaje interpretado, y generalmente sus bibliotecas son pesadas y poco eficientes, por lo que se suele considerar un lenguaje ideal únicamente para prototipado \autocite{SlowestProgrammingLanguages2020}.
+Python es un lenguaje de programación interpretado, que se ha convertido en uno de los lenguajes de programación más populares en la actualidad \autocite{TIOBEIndex}. Python es un lenguaje de programación de tipado dinámico, que permite la inferencia de tipos, y que garantiza la seguridad de la memoria en tiempo de ejecución. Este lenguaje de programación resulta muy versátil, utilizándose en diferentes campos, como la inteligencia artificial, el análisis de datos, la programación web, etc. Además, dispone de una gran cantidad de bibliotecas y \textit{frameworks}, que facilitan el desarrollo de aplicaciones de todo tipo.
+
+Sin embargo, al igual que JavaScript, Python no es un lenguaje de programación especialmente rápido, ya que es un lenguaje interpretado, y generalmente sus bibliotecas son pesadas y poco eficientes, por lo que se suele considerar un lenguaje ideal únicamente para prototipado \autocite{SlowestProgrammingLanguages2020}.
 
 \subsection{C++}
-C++ es un lenguaje de programación de propósito general, que se utiliza en diferentes campos, como la programación de sistemas, la programación de videojuegos, la programación de aplicaciones de escritorio, etc. C++ es un lenguaje de programación de tipado estático, que permite la inferencia de tipos, y que garantiza la seguridad de la memoria en tiempo de compilación. C++ es un lenguaje de programación muy eficiente, que permite la programación de bajo nivel, y que dispone de una gran cantidad de bibliotecas y frameworks, que facilitan el desarrollo de aplicaciones de todo tipo. C++ es un lenguaje de programación muy rápido, que se utiliza en aplicaciones que requieren un alto rendimiento, como videojuegos, motores de renderizado, sistemas operativos, etc. Sin embargo, C++ es un lenguaje de programación antiguo, que no dispone de características modernas, como un gestor de paquetes para la gestión de dependencias. Además, C++ no es un lenguaje de programación concebido para el desarrollo de aplicaciones web.
+C++ es un lenguaje de programación de propósito general, que se utiliza en diferentes campos, como la programación de sistemas, la programación de videojuegos, la programación de aplicaciones de escritorio, etc. C++ es un lenguaje de programación de tipado estático, que permite la inferencia de tipos, y que garantiza la seguridad de la memoria en tiempo de compilación. C++ es un lenguaje de programación muy eficiente, que permite la programación de bajo nivel, y que dispone de una gran cantidad de bibliotecas y frameworks, que facilitan el desarrollo de aplicaciones de todo tipo. C++ es un lenguaje de programación muy rápido, que se utiliza en aplicaciones que requieren un alto rendimiento, como videojuegos, motores de renderizado o sistemas operativos, entre otros. 
+
+Sin embargo, C++ es un lenguaje de programación antiguo, que no dispone de características modernas, como un gestor de paquetes para la gestión de dependencias. Además, C++ no es un lenguaje de programación concebido para el desarrollo de aplicaciones web, y si bien existen herramientas para compilar C++ a \textit{WebAssembly}, su uso no es mayoritario.
 
 \subsection{Rust}
-El lenguaje de programación Rust es un lenguaje de programación innovador que prioriza la seguridad y la eficiencia. Este lenguaje ha sido diseñado por Mozilla Research, y se ha convertido en uno de los lenguajes de programación más populares en la actualidad. Rust es un lenguaje de programación multiparadigma, que combina elementos de programación funcional, orientada a objetos e imperativa. Rust es un lenguaje de programación de tipado estático, que permite la inferencia de tipos, y que garantiza la seguridad de la memoria en tiempo de compilación. 
+El lenguaje de programación Rust es un lenguaje de programación innovador que prioriza la seguridad y la eficiencia. Este lenguaje ha sido diseñado por Mozilla Research, y se ha convertido en uno de los lenguajes de programación más populares en la actualidad. Rust es un lenguaje de programación multiparadigma, que combina elementos de programación funcional, orientada a objetos e imperativa. Este es un lenguaje de programación de tipado estático, que permite la inferencia de tipos, y que garantiza la seguridad de la memoria en tiempo de compilación.
 
-Rust dispone de características modernas, como un gestor de paquetes para la gestión de dependencias, llamado Cargo, y compilación nativa a WebAssembly, lo que permite la ejecución de código Rust en un navegador web \autocite{WebAssembly}.
+Rust dispone de características modernas, como un gestor de paquetes para la gestión de dependencias, llamado Cargo, y compilación nativa a WebAssembly, lo que permite la ejecución de código Rust en un navegador web \autocite{WebAssembly}. Por tanto, cumple los objetivos del proyecto, al permitir la compilación a los sistemas operativos mayoritarios, y a un entorno web.
 
 \subsubsection{WebAssembly y wasm-bindgen}
 
@@ -70,9 +108,11 @@ Con \texttt{wasm-bindgen}, es posible exponer funciones Rust a JavaScript y vice
 
 \subsection{Otras herramientas consideradas}
 \subsubsection{Unity}
-Unity es un motor de videojuegos multiplataforma, que permite el desarrollo de videojuegos en 2D y 3D. Unity es un motor de videojuegos muy popular, que se puede utilizar también como herramienta crear simulaciones, que es el propósito de este proyecto. Unity dispone de una gran cantidad de herramientas y bibliotecas, que facilitan el desarrollo de aplicaciones de todo tipo. Sin embargo, Unity es un motor de videojuegos pesado, que consume muchos recursos, y que no es especialmente eficiente en términos de rendimiento, sobre todo en entornos web.
+Unity es un motor de videojuegos multiplataforma, que permite el desarrollo de videojuegos en 2D y 3D. Este motor es muy popular, que se puede utilizar también como herramienta para crear simulaciones, que es el propósito de este proyecto. Unity dispone de una gran cantidad de herramientas y bibliotecas, que facilitan el desarrollo de aplicaciones de todo tipo. Sin embargo, Unity es un motor de videojuegos pesado, que consume muchos recursos, y que no es especialmente eficiente en términos de rendimiento, sobre todo en entornos web.
 
 \subsection{Comparativa de rendimiento}
+
+Como se puede observar en la \autoref{fig:comparativa-rendimiento}, que coincide con el análisis de \autocite{samTop10Fastest2024}, Rust cae en los primeros puestos por rendimiento, teniendo un rendimiento similar al de C y C++, y superando ampliamente a Python y Node.js (\textit{JavaScript}).
 
 \begin{figure}[H]
     \centering
@@ -82,8 +122,6 @@ Unity es un motor de videojuegos multiplataforma, que permite el desarrollo de v
 \end{figure}
 
 % https://goodmanwen.github.io/Programming-Language-Benchmarks-Visualization/
-
-Como se puede observar en la \autoref{fig:comparativa-rendimiento}, que coincide con el análisis de \autocite{samTop10Fastest2024}, Rust cae en los primeros puestos por rendimiento, teniendo un rendimiento similar al de C y C++, y superando ampliamente a Python y Node.js (\textit{JavaScript}).
 
 Sin embargo, esta tabla no es válida en entornos web, dado que en estos entornos el rendimiento de los diferentes lenguajes de programación se ve limitado por características propias de los navegadores. Por ejemplo, Rust compilado a WebAssembly no tiene acceso directo al \ac{DOM}, que es el modelo de objetos de un documento HTML. Esto significa que Rust no puede manipular directamente los elementos de la página web, y que necesita comunicarse con JavaScript para hacerlo. 
 

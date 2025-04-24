@@ -13,34 +13,6 @@
 
 Como se ha explicado en el \autoref{sec:ficheros-c3d}, un \ac{C3D} es un fichero binario que contiene la posición de diferentes marcadores en el tiempo. Por tanto, no es difícil convertir estos datos en un formato de texto legible. Se muestra en la \autoref{tab:c3d_data} un fragmento de un fichero \ac{C3D} que se ha utilizado durante el desarrollo de la aplicación convertido a una tabla:
 
-\begin{table}[htbp]
-  \centering
-  \setlength{\tabcolsep}{5pt}
-  \renewcommand{\arraystretch}{1.2}
-  \rowcolors{3}{white}{gray!10}
-  \begin{tabular}{r|S[table-format=-3.2]S[table-format=-3.2]S[table-format=-3.2]|S[table-format=-3.2]S[table-format=-3.2]S[table-format=-3.2]}
-  \toprule
-  \multirow{2}{*}{\textbf{Frame}} & \multicolumn{3}{c|}{RFIN                          } & \multicolumn{3}{c}{RFRA                          } \\
-    & {\textbf{x}} & {\textbf{y}} & {\textbf{z}} & {\textbf{x}} & {\textbf{y}} & {\textbf{z}} \\
-  \midrule
-  1 & 46.80 & 3.25 & 664.41 & -23.14 & -4.06 & 827.33 \\
-  2 & 46.80 & 3.25 & 664.41 & -23.14 & -4.07 & 827.30 \\
-  3 & 46.80 & 3.25 & 664.41 & -23.14 & -4.08 & 827.30 \\
-  4 & 46.80 & 3.25 & 664.41 & -23.14 & -4.07 & 827.30 \\
-  5 & 46.80 & 3.25 & 664.41 & -23.15 & -4.06 & 827.31 \\
-  \midrule
-  6 & 46.80 & 3.25 & 664.41 & -23.16 & -4.03 & 827.33 \\
-  7 & 46.81 & 3.25 & 664.41 & -23.18 & -4.00 & 827.35 \\
-  8 & 46.82 & 3.28 & 664.40 & -23.21 & -3.99 & 827.36 \\
-  9 & 46.87 & 3.36 & 664.40 & -23.23 & -4.02 & 827.33 \\
-  10 & 46.93 & 3.51 & 664.38 & -23.23 & -4.09 & 827.26 \\
-  \bottomrule
-  \end{tabular}
-  \caption{Fragmento de un fichero \acs{C3D} convertido a tabla}
-  \label{tab:c3d_data}
-\end{table}
-
-Se puede observar que aparecen dos marcadores, \ac{RFIN} y \ac{RFRA}, con sus coordenadas en el espacio, representadas por los valores de las columnas \textit{x}, \textit{y} y \textit{z}, en unidades de milímetros.
 
 \section{Estructura del proyecto} \label{sec:estructura-programa}
 
