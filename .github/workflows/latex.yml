@@ -3,11 +3,10 @@ name: Build LaTeX and Deploy PDF to GitHub Pages
 on:
   push:
     branches:
-      - 'main'
-      - 'CI'
+      - '**'
   pull_request:
     branches:
-      - 'main'
+      - '**'
 
 permissions:
   pages: write
@@ -179,6 +178,7 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: build
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
