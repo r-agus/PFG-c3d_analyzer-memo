@@ -1,10 +1,20 @@
-name: Compilar LaTeX
+name: Build LaTeX and Deploy PDF to GitHub Pages
 
 on:
   push:
     branches:
-      - main
+      - 'main'
   pull_request:
+    branches:
+      - 'main'
+
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -13,19 +23,72 @@ jobs:
 
     steps:
       - name: ✅ Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ⚙️ Instalar TeX Live
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive-full biber latexmk
 
-      - name: 📄 Compilar con latexmk
+      - name: 📄 Compilar LaTeX
         run: |
           latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
 
-      - name: 📂 Guardar PDF como artefacto
+      - name: 📤 Subir PDF como artefacto separado
         uses: actions/upload-artifact@v4
         with:
-          name: Memoria-PDF
+          name: main-pdf
           path: main.pdf
+
+      - name: 📂 Preparar carpeta de deploy
+        run: |
+          mkdir public
+          cp main.pdf public/index.pdf
+          cat <<EOF > public/index.html
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <title>Memoria</title>
+            <style>
+              body {
+                margin: 0;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+              }
+              iframe {
+                flex: 1;
+                width: 100%;
+                border: none;
+              }
+              header {
+                padding: 1rem;
+                background: #f0f0f0;
+                text-align: center;
+                font-family: sans-serif;
+                font-size: 1.5rem;
+              }
+            </style>
+          </head>
+          <body>
+            <header>📄 Memoria del proyecto</header>
+            <iframe src="index.pdf"></iframe>
+          </body>
+          </html>
+          EOF
+
+      - name: 📤 Subir carpeta para Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
