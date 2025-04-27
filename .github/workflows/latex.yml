@@ -3,10 +3,10 @@ name: Build LaTeX and Deploy PDF to GitHub Pages
 on:
   push:
     branches:
-      - '**'
+      - 'main'
   pull_request:
     branches:
-      - '**'
+      - 'main'
 
 permissions:
   pages: write
@@ -33,6 +33,12 @@ jobs:
       - name: 📄 Compilar LaTeX
         run: |
           latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+
+      - name: 📤 Subir PDF como artefacto separado
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-pdf
+          path: main.pdf
 
       - name: 📂 Preparar carpeta de deploy
         run: |
