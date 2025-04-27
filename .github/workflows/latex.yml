@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'CI'
   pull_request:
     branches:
       - 'main'
@@ -49,35 +50,127 @@ jobs:
           <html lang="es">
           <head>
             <meta charset="UTF-8">
-            <title>Memoria</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Memoria Swing3D</title>
+            <!-- Bootstrap CSS -->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+            <!-- Font Awesome para iconos más bonitos -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
             <style>
+              :root {
+                --bs-body-bg: #111827;
+                --bs-body-color: #f3f4f6;
+                --bs-primary: #3b82f6;
+                --bs-primary-rgb: 59, 130, 246;
+              }
+              
               body {
-                margin: 0;
-                height: 100vh;
+                min-height: 100vh;
                 display: flex;
                 flex-direction: column;
+                background-color: var(--bs-body-bg);
+                color: var(--bs-body-color);
               }
-              iframe {
+              
+              .navbar {
+                background-color: #1f2937;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+              }
+              
+              .pdf-container {
                 flex: 1;
+                position: relative;
+                margin: 0 auto;
                 width: 100%;
+                background-color: white;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+              }
+              
+              iframe {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
                 border: none;
               }
-              header {
-                padding: 1rem;
-                background: #f0f0f0;
-                text-align: center;
-                font-family: sans-serif;
-                font-size: 1.5rem;
+              
+              .btn-primary {
+                background-color: var(--bs-primary);
+                border-color: var(--bs-primary);
+              }
+              
+              .btn-primary:hover {
+                background-color: #2563eb;
+                border-color: #2563eb;
+              }
+              
+              .mobile-download {
+                display: none;
+              }
+              
+              @media (max-width: 768px) {
+                .desktop-download {
+                  display: none;
+                }
+                
+                .mobile-download {
+                  display: block;
+                }
+                
+                .pdf-container {
+                  position: relative;
+                  padding-bottom: 150%;
+                  height: 0;
+                }
               }
             </style>
           </head>
           <body>
-            <header>📄 Memoria del proyecto</header>
-            <iframe src="index.pdf"></iframe>
+            <!-- Navbar de Bootstrap -->
+            <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+              <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                  <i class="fas fa-file-pdf fs-4 me-2"></i>
+                  <span class="fw-bold">Memoria Swing3D</span>
+                </a>
+                <div class="desktop-download ms-auto">
+                  <a href="index.pdf" class="btn btn-primary" download>
+                    <i class="fas fa-download me-2"></i>Descargar PDF
+                  </a>
+                </div>
+              </div>
+            </nav>
+            
+            <!-- Botón móvil para descargar -->
+            <div class="container mb-4 text-center">
+              <div class="mobile-download">
+                <a href="index.pdf" class="btn btn-primary btn-lg" download>
+                  <i class="fas fa-download me-2"></i>Descargar PDF
+                </a>
+              </div>
+            </div>
+            
+            <!-- Contenido principal con PDF -->
+            <div class="container flex-grow-1 d-flex flex-column mb-4">
+              <div class="pdf-container flex-grow-1">
+                <iframe src="index.pdf" class="border-0"></iframe>
+              </div>
+            </div>
+            
+            <!-- Footer con información adicional -->
+            <footer class="py-3 mt-auto text-light" style="background-color: #1f2937;">
+              <div class="container text-center">
+                <small>© 2025 Swing3D - Visualizador de documentación</small>
+              </div>
+            </footer>
+            
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
           </body>
           </html>
           EOF
-
       - name: 📤 Subir carpeta para Pages
         uses: actions/upload-pages-artifact@v3
         with:
