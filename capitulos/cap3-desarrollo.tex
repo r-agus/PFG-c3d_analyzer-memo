@@ -9,14 +9,20 @@
 
 \chapter{Desarrollo del proyecto} \label{sec:cap3}
 
-\noindent Este proyecto se ha llevado a cabo en diferentes etapas. En un comienzo, se trabaja con un fichero \ac{C3D} capturado por las cámaras de INEF, con el sistema de captura de datos de la marca Vicon explicado en el \autoref{sec:cap2}. Más adelante se proporciona soporte para cualquier tipo de fichero \ac{C3D}. Estos datos de entrada consisten en una grabación a 240 \ac{Hz} de un \textit{swing} de golf\footnote{Un swing de golf es la acción mediante la cual los jugadores golpean la pelota en este deporte \autocite{GolfSwing2025}}. 
+Este proyecto se ha llevado a cabo en diferentes etapas, añadiendo mejoras progresivamente. Este capítulo explica cómo, partiendo de un entorno simple creado con \textit{Bevy}, se ha ido añadiendo funcionalidad hasta llegar a un entorno tridimensional completo, capaz de representar cualquier movimiento, así como trazas, vectores y uniones entre marcadores, con numerosas opciones de personalización.
 
-Como se ha explicado en el \autoref{sec:ficheros-c3d}, un \ac{C3D} es un fichero binario que contiene la posición de diferentes marcadores en el tiempo. Por tanto, no es difícil convertir estos datos en un formato de texto legible. Se muestra en la \autoref{tab:c3d_data} un fragmento de un fichero \ac{C3D} que se ha utilizado durante el desarrollo de la aplicación convertido a una tabla:
+Este capítulo muestra ejemplos del desarrollo del proyecto, utilizando un fichero \ac{C3D} de ejemplo. Este fichero ha sido capturado por las cámaras de INEF, que representa un swing de golf, y ha sido capturado con el sistema de la marca Vicon explicado en el \autoref{sec:cap2}. Como características técnicas, se trata de una grabación a 240 \ac{Hz}, tomado con 6 cámaras, y con un total de 585 marcadores, de los cuales 291 son marcadores de posición, y los restantes simbolizan aceleraciones, velocidades y fuerzas.
+
+Este capítulo comienza explicando la estructura del proyecto, introduciendo así los diferentes módulos que lo componen. A continuación, se explica la integración del \textit{parser} de \ac{C3D} en el proyecto, y cómo se ha modificado para adaptarlo a las necesidades del mismo. Después, se explica la integración de \textit{Bevy}, y finalmente, se explica la carga de ficheros y la configuración del programa, que diferencian a este proyecto al aportar numerosas opciones de personalización.
 
 
 \section{Estructura del proyecto} \label{sec:estructura-programa}
 
-Siguiendo un principio modular, el proyecto se ha implementado en diferentes módulos, cada uno de los cuales forma un \textit{plugin}, que se integran en el módulo principal. Estos módulos son independientes entre sí, y cada uno de ellos tiene una función específica. De este modo, se consigue un código más limpio y fácil de mantener. Los módulos que se han implementado son los siguientes:
+Siguiendo un principio modular, el proyecto se ha implementado en diferentes módulos, cada uno de los cuales forma un \textit{plugin}, que se integran en el módulo principal. Estos módulos son independientes entre sí, y cada uno de ellos tiene una función específica. De este modo, se consigue un código más limpio y fácil de mantener.
+
+La estructura general consta de un módulo principal, que se encarga de la representación de la información proporcionada por cada uno de los módulos secundarios. Estos módulos secundarios se encargan de cada una de las funciones específicas del programa, como la carga de ficheros \ac{C3D} y ficheros de configuración y la implementación de una interfaz gráfica. Además, existe un módulo específico para la carga de ficheros en entornos web, eliminando las restricciones de los navegadores en cuanto a la carga de ficheros.
+
+Los módulos que se han implementado son los siguientes:
 
 \begin{itemize}
     \item \textbf{\texttt{app\_control}:} Es el módulo principal del programa. Se encarga de la orquestación de los diferentes módulos, inicialización de recursos\footnote{Un recurso es una estructura de datos que se utiliza para almacenar información en el programa \autocite{Resources,ResourcesUnofficialBevy}.} y generación del entorno. A su vez, está compuesto por diferentes submódulos, que son:
@@ -41,14 +47,15 @@ Siguiendo un principio modular, el proyecto se ha implementado en diferentes mó
 
 Además de los módulos ya mencionados, se ha modificado el \textit{crate} \texttt{c3dio}, como se explica en \autoref{sec:parser-c3d}.
 
-\section{\textit{Parser} \acs{C3D}} \label{sec:parser-c3d}
-Estos datos se deben integrar con el resto del programa. Para ello, se debe contar con un \textit{parser} que trate con el binario.
+\section{Analizador de ficheros \acs{C3D}} \label{sec:parser-c3d}
+Un fichero \ac{C3D} se debe integrar con el resto del programa. Para ello, se debe contar con un analizador que trate con el binario, que es un módulo secundario del proyecto, especializado en la traducción del formato \ac{C3D} a una estructura de datos interna que se integre con el resto del código.
 
-Se ha partido del \textit{crate} de \textit{Rust} \texttt{bevy-c3d}. Este \textit{crate} utiliza a su vez el \textit{crate} \texttt{c3dio}, que es un \textit{parser} para ficheros \ac{C3D}, pero integrado a \textit{Bevy}. De este modo, se consigue un \textit{Asset} que se puede cargar en el motor de juego.
+Se ha partido del \textit{crate}\footnote{Como se explica en el \autoref{apx:herramientas_usadas}, un \textit{crate} es una unidad mínima de compilación de Rust. En este caso, un \textit{crate} representa una biblioteca creada para analizar los ficheros \ac{C3D}.} de \textit{Rust} \texttt{bevy-c3d}. Este \textit{crate} depende a su vez del \textit{crate} \texttt{c3dio}, que es un analizador para ficheros \ac{C3D}, pero integrado a \textit{Bevy}. De este modo, se consigue un \textit{Asset} que se puede cargar en el motor de juego.
 
-Se ha modificado el \textit{crate} \texttt{c3dio} para adaptarlo a las necesidades del proyecto. En este caso, se han arreglado dos errores graves que impiden la compatibilidad con los ficheros generado por Vicon. Ambos errores se deben a modificaciones en la especificación introducidos de manera unilateral por Vicon. El primero de ellos se debe a una modificación en la especificación que cambia la manera de codificar los eventos, que hace que no se lea ningún evento del \ac{C3D}. El segundo error se debe a que Vicon elimina una restricción de la especificación, que limita el número de marcadores a 255. En este caso, Vicon permite un número ilimitado de marcadores, lo que provoca que el \textit{parser} solo reconozca los primeros 255 marcadores, y el resto no se lean.   
+Se ha modificado el \textit{crate} \texttt{c3dio} para adaptarlo a las necesidades del proyecto. En este caso, se han arreglado dos errores graves que impiden la compatibilidad con los ficheros generados por Vicon. Ambos errores se deben a modificaciones en la especificación introducidos de manera unilateral por Vicon. El primero de ellos se debe a una modificación en la especificación que cambia la manera de codificar los eventos, que hace que no se lea ningún evento del \ac{C3D}. El segundo error se debe a que Vicon elimina una restricción de la especificación, que limita el número de marcadores a 255. En este caso, Vicon permite un número ilimitado de marcadores, lo que provoca que el \textit{parser} solo reconozca los primeros 255 marcadores, y el resto no se lean.   
 
-\section{\textit{Bevy}} \label{sec:bevy}
+\section{Integración de \textit{Bevy} en el proyecto} \label{sec:bevy}
+
 Este proyecto usa el motor de videojuegos \textit{Bevy} como base para generar un entorno tridimensional donde representar el \ac{C3D}. Bevy sigue el paradigma \ac{ECS}, separando entre entidades, componentes y sistemas. Las entidades son los objetos que se representan en el entorno tridimensional, los componentes son las propiedades de estas entidades, y los sistemas son las funciones que se aplican a estas entidades. Este paradigma permite una gran flexibilidad y escalabilidad, lo que lo hace ideal para este tipo de proyectos \autocite{prdevingDeepdivingEntityComponent2023}.
 
 Se muestra en la \autoref{fig:entorno3D} una imagen del entorno tridimensional creado con Bevy, antes de cargar el \ac{C3D}.
