@@ -44,6 +44,12 @@ jobs:
         run: |
           mkdir public
           cp main.pdf public/index.pdf
+
+          # Información del commit para mostrar la versión
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          COMMIT_DATE=$(git log -1 --format=%cd --date=format:"%d-%m-%Y %H:%M")
+          BRANCH_NAME=${GITHUB_REF_NAME}
+
           cat <<EOF > public/index.html
           <!DOCTYPE html>
           <html lang="es">
@@ -162,7 +168,7 @@ jobs:
             <!-- Footer con información adicional -->
             <footer class="py-3 mt-auto text-light" style="background-color: #1f2937;">
               <div class="container text-center">
-                <small>© 2025 Swing3D - Visualizador de documentación</small>
+                <small>© 2025 Swing3D - Versión del ${COMMIT_DATE} (${COMMIT_SHA})</small>
               </div>
             </footer>
             
