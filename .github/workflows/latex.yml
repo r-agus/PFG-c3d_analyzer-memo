@@ -168,7 +168,7 @@ jobs:
             <!-- Footer con información adicional -->
             <footer class="py-3 mt-auto text-light" style="background-color: #1f2937;">
               <div class="container text-center">
-                <small>© 2025 Swing3D - Versión del ${COMMIT_DATE} (${COMMIT_SHA})</small>
+                <small>© 2025 Swing3D - Versión del ${COMMIT_DATE} (#${COMMIT_SHA})</small>
               </div>
             </footer>
             
