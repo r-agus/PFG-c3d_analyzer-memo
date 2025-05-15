@@ -435,7 +435,7 @@ En la \autoref{fig:vectores} se muestra un ejemplo de la representación de los 
   \label{fig:vectores}
 \end{figure}
 
-Un diagrama de actividad que explica el funcionamiento de la representación de los vectores se puede ver en la \autoref{fig:diag-vectores}.
+La representación de los vectores se ha programado de la forma que se puede ver en el diagrama de actividad de la \autoref{fig:diag-vectores}.
 
 \begin{figure}[H]
   \centering
@@ -499,7 +499,7 @@ Para diferenciar los eventos de \textit{Bevy} y los eventos del \ac{C3D}, se ha 
 La última fila contiene un \textit{slider} que permite variar el rango de las trazas, variar entre configuraciones y ver u ocultar vectores. Cuando se pulsa cualquiera de los botones con texto, se abre un menú desplegable que permite seleccionar la configuración deseada.
 
 \subsection{Panel derecho} \label{sec:panel-derecho}
-El panel derecho de la pantalla está dedicado a la representación de gráficas de los marcadores. Dispone inicialmente de un botón que permite añadir un nuevo gráfico, y un desplegable con la configuración global de todos los gráficos. Este desplegable permite cambiar el eje X de los gráficos, teniendo opciones para representación temporal respecto al inicio de la captura, en unidades de segundo, o en unidades de fotogramas.
+El panel derecho de la pantalla está dedicado a la representación gráfica de coordenadas de posición (x, y o z) de los marcadores a lo largo del tiempo. Dispone inicialmente de un botón que permite añadir un nuevo gráfico, y un desplegable con la configuración global de todos los gráficos. Este desplegable permite cambiar el eje X de los gráficos, teniendo opciones para representación temporal respecto al inicio de la captura, en unidades de segundo, o en unidades de fotogramas.
 
 La \autoref{fig:panel_derecho} muestra el panel derecho en su estado inicial, donde no se ha añadido ningún gráfico. 
 
@@ -519,7 +519,7 @@ Cuando se pulsa el botón de añadir gráfico, se genera una ventana emergente c
   \label{fig:marker_window}
 \end{figure}
 
-La representación de cada una de las componentes es una proyección en 2D, donde el eje X es el tiempo, y el eje Y es la componente del marcador. Estos gráficos sirven para el estudio del movimiento, y en cada uno se representa el valor de la componente Y en la parte superior derecha.
+La representación de cada una de las componentes es una proyección en 2D, donde el eje X es el tiempo, y el eje Y es la componente del marcador, cuyo significado y unidades dependerá del marcador específico que se represente. Por ejemplo, si se trata de una posición, el valor de la componente Y de la gráfica tendrá unidades de milímetros (e indicará la posición en el eje que se esté representando), y si se trata de una velocidad, tendrá unidades de metros por segundo. Estos gráficos sirven para el estudio del movimiento, y en cada uno se representa el valor de la componente Y de la gráfica en la parte superior derecha.
 
 Cuando se añade un gráfico, este se añade al panel derecho, en la posición que le corresponda siguiendo el orden alfabético, y se puede redimensionar. 
 Además, se puede eliminar el gráfico pulsando el botón de eliminar gráfico, que aparece en la parte superior derecha del gráfico. En la \autoref{fig:panel_dcho_con_graficos} se muestra un ejemplo de la representación de gráficos, donde se han añadido los gráficos de las componentes X, Y y Z del marcador \texttt{OBJ1}. 
