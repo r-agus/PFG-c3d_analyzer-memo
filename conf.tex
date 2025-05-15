@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt,a4paper,openright,twoside]{report}
 
 % Paquetes para el manejo de la lengua y la codificación de los caracteres
 \usepackage[spanish,es-tabla]{babel} % Para tener los elementos de texto en español
@@ -17,10 +17,18 @@
 \usepackage[protrusion=false, expansion=true]{microtype} % mejora la justificación del documento
 
 % Paquetes para el manejo de hipervínculos
-\usepackage[pdfpagelabels,colorlinks=true, allcolors=black]{hyperref} %pone los links en negro
+\usepackage[hyphens]{url}
+\usepackage{xurl}
+\usepackage[
+    breaklinks,
+    pdfpagelabels,
+    colorlinks=true,
+    allcolors=black
+]{hyperref}
 
 % Paquetes para el manejo de la bibliografía
 \usepackage[style=ieee]{biblatex}
+\DeclareFieldFormat{howpublished}{\url{#1}}
 \usepackage{csquotes} % Facilitar el trabajo con citas
 \addbibresource{export.bib}
 \setcounter{biburlnumpenalty}{9000}
