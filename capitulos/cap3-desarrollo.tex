@@ -522,7 +522,7 @@ Cuando se pulsa el botón de añadir gráfico, se genera una ventana emergente c
 La representación de cada una de las componentes es una proyección en 2D, donde el eje X es el tiempo, y el eje Y es la componente del marcador, cuyo significado y unidades dependerá del marcador específico que se represente. Por ejemplo, si se trata de una posición, el valor de la componente Y de la gráfica tendrá unidades de milímetros (e indicará la posición en el eje que se esté representando), y si se trata de una velocidad, tendrá unidades de metros por segundo. Estos gráficos sirven para el estudio del movimiento, y en cada uno se representa el valor de la componente Y de la gráfica en la parte superior derecha.
 
 Cuando se añade un gráfico, este se añade al panel derecho, en la posición que le corresponda siguiendo el orden alfabético, y se puede redimensionar. 
-Además, se puede eliminar el gráfico pulsando el botón de eliminar gráfico, que aparece en la parte superior derecha del gráfico. En la \autoref{fig:panel_dcho_con_graficos} se muestra un ejemplo de la representación de gráficos, donde se han añadido los gráficos de las componentes X, Y y Z del marcador \texttt{OBJ1}. 
+Además, se puede eliminar el gráfico pulsando el botón de eliminar gráfico, que aparece en la parte superior derecha del gráfico. En la \autoref{fig:panel_dcho_con_graficos} se muestra un ejemplo de la representación de gráficos, donde se han añadido los gráficos de las componentes X, Y y Z del marcador \texttt{OBJ1}. En la gráfica, el color verde indica el pasado, y el color rojo indica el futuro. La intersección de ambos colores indica el momento actual.
 
 \begin{figure}[H]
   \centering
@@ -531,7 +531,7 @@ Además, se puede eliminar el gráfico pulsando el botón de eliminar gráfico, 
   \label{fig:panel_dcho_con_graficos}
 \end{figure}
 
-A modo de ejemplo, se incluye la \autoref{fig:estudio_posicion}, donde se hace énfasis en un momento donde un jugador de golf está realizando un movimiento de golpeo.
+A modo de ejemplo, se incluye la \autoref{fig:estudio_posicion}, donde se hace énfasis en un momento donde un jugador de golf está realizando un movimiento de golpeo. Al igual que en casos anteriores, la primera gráfica representa la componente X respecto al tiempo, pero en este caso también se hace énfasis en la tercera gráfica, que anteriormente no se ha representado completamente.
 
 \begin{figure}[H]
   \centering
@@ -540,15 +540,15 @@ A modo de ejemplo, se incluye la \autoref{fig:estudio_posicion}, donde se hace �
   \label{fig:estudio_posicion}
 \end{figure}
 
-En este instante, el palo se encuentra en una posición tal que la componente X de la velocidad lineal es cero, y las componentes Y y Z son negativas, con un módulo elevado. Se puede comprobar en los gráficos que la componente X de la posición se encuentra en un mínimo, es decir, en este punto no presenta variación, y las componentes Y y Z se encuentran en un momento de variación muy elevado, es decir, con mucha pendiente.
+En este instante, el palo se encuentra en una posición tal que la componente X de la velocidad lineal es cero\footnote{En el fichero de este estudio se cuenta con un marcador que representa la velocidad lineal, \texttt{LVelOBJ1}, sin embargo, en estas gráficas se representa la posición para simplificar el ejemplo. El lector puede imaginarse la velocidad lineal a partir de la posición como la derivada de esta respecto al tiempo, donde solo es importante diferenciar entre una pendiente positiva, que implica que el objeto está avanzando en la dirección de la coordenada que se representa, y una pendiente negativa, con el efecto contrario.}, y las componentes Y y Z son negativas, con un módulo elevado. Se puede comprobar en los gráficos que la componente X de la posición se encuentra en un mínimo, es decir, en este punto no presenta variación, y las componentes Y y Z se encuentran en un momento de variación muy elevado, es decir, con mucha pendiente.
 
-En las figuras anteriores, se puede observar que en el gráfico se marca el pasado con un color verde, y el futuro con un color rojo. La intersección de ambos indica de forma clara el momento actual. Además, en la \autoref{fig:panel_dcho_con_graficos} se puede observar que el panel derecho ocupa un mayor porcentaje de la pantalla que en la \autoref{fig:estudio_posicion}. Como la primera tiene más espacio, se puede añadir información adicional, como marcas en el eje X para disponer de mayores referencias temporales. 
+Como se ha explicado anteriormente, se puede observar que en el gráfico se marca el pasado con un color verde, y el futuro con un color rojo. La intersección de ambos indica de forma clara el momento actual. Además, en la \autoref{fig:panel_dcho_con_graficos} se puede observar que el panel derecho ocupa un mayor porcentaje de la pantalla que en la \autoref{fig:estudio_posicion}. Como la primera tiene más espacio, se puede añadir información adicional, como marcas en el eje X para disponer de mayores referencias temporales. 
 
-\subsection{Implementación} \label{sec:implementacion-gui}
+\subsection{Implementación de la interfaz 2D} \label{sec:implementacion-gui}
 
-Siguiendo el enfoque modular del resto del proyecto, la \ac{GUI} se ha implementado como un \textit{plugin} de \textit{Bevy}, que se puede añadir o eliminar en cualquier momento. Esto permite mantener la \ac{GUI} separada del resto del código, y facilita su mantenimiento y evolución.
+Siguiendo el enfoque modular del proyecto, la \ac{GUI} se ha implementado como un \textit{plugin} de \textit{Bevy}, que se puede añadir o eliminar en cualquier momento. Esto permite mantener la \ac{GUI} separada del resto del código, y facilita su mantenimiento y evolución.
 
-La \ac{GUI} se ha implementado utilizando el \textit{crate} \texttt{bevy\_egui}, que permite crear interfaces gráficas de usuario en \textit{Bevy} utilizando la biblioteca \textit{Egui}.  
+La \ac{GUI} se ha implementado utilizando el \textit{crate} \texttt{bevy\_egui}, que permite crear interfaces gráficas de usuario en \textit{Bevy} utilizando la biblioteca \textit{Egui}, que proporciona un conjunto de métodos para dibujar figuras en una ventana. Es decir, \textit{Egui} proporciona las herramientas para dibujar figuras en la pantalla, como rectángulos, líneas o botones, y a partir de esta, se han implementado las funciones que se explican a continuación. 
 
 Al arrancar la aplicación, se carga el \textit{plugin} de la \ac{GUI}, que se encarga de crear la ventana y los paneles. La interacción con el resto del programa se realiza mediante eventos de \textit{Bevy}. 
 
