@@ -27,7 +27,7 @@ Los módulos que se han implementado son los siguientes:
 \begin{itemize}
     \item \textbf{\texttt{app\_control}:} Es el módulo principal del programa. Se encarga de la orquestación de los diferentes módulos, inicialización de recursos\footnote{Un recurso es una estructura de datos que se utiliza para almacenar información en el programa \autocite{Resources,ResourcesUnofficialBevy}.} y generación del entorno. A su vez, está compuesto por diferentes submódulos, que son:
     \begin{itemize}
-        \item \texttt{file\_drop}: Se encarga de gestionar la carga de ficheros \ac{C3D} y de configuración. Este módulo se encarga de la carga de los ficheros, y de la creación de los eventos necesarios para la representación del \ac{C3D} en el entorno 3D.
+        \item \texttt{file\_drop}: Se encarga de gestionar la carga de ficheros \ac{C3D} y de configuración y de la creación de los eventos necesarios para la representación del \ac{C3D} en el entorno 3D.
         \item \texttt{markers}: Se encarga de la representación de los marcadores en el entorno 3D, incluyendo su generación, actualización y eliminación.
         \item \texttt{joins}: Se encarga de la representación de las uniones entre los marcadores en el entorno 3D, incluyendo su generación, actualización y eliminación. 
         \item \texttt{traces}: Se encarga de la representación de las trazas de los marcadores en el entorno 3D, incluyendo su generación, actualización y eliminación.
@@ -48,7 +48,7 @@ Los módulos que se han implementado son los siguientes:
 Además de los módulos ya mencionados, se ha modificado el \textit{crate} \texttt{c3dio}, como se explica en \autoref{sec:parser-c3d}.
 
 \section{Analizador de ficheros \acs{C3D}} \label{sec:parser-c3d}
-Un fichero \ac{C3D} se debe integrar con el resto del programa. Para ello, se debe contar con un analizador que trate con el binario, que es un módulo secundario del proyecto, especializado en la traducción del formato \ac{C3D} a una estructura de datos interna que se integre con el resto del código.
+Un fichero \ac{C3D} se debe integrar con el resto del programa. Para ello, se debe contar con un analizador (comúnmente llamado \textit{parser}) que trate con el binario, que es un módulo secundario del proyecto, especializado en la traducción del formato \ac{C3D} a una estructura de datos interna que se integre con el resto del código.
 
 Se ha partido del \textit{crate}\footnote{Como se explica en el \autoref{apx:herramientas_usadas}, un \textit{crate} es una unidad mínima de compilación de Rust. En este caso, un \textit{crate} representa una biblioteca creada para analizar los ficheros \ac{C3D}.} de \textit{Rust} \texttt{bevy-c3d}. Este \textit{crate} depende a su vez del \textit{crate} \texttt{c3dio}, que es un analizador para ficheros \ac{C3D}, pero integrado a \textit{Bevy}. De este modo, se consigue un \textit{Asset} que se puede cargar en el motor de juego.
 
@@ -58,7 +58,7 @@ Se ha modificado el \textit{crate} \texttt{c3dio} para adaptarlo a las necesidad
 
 Este proyecto usa el motor de videojuegos \textit{Bevy} como base para generar un entorno tridimensional donde representar el \ac{C3D}. Bevy sigue el paradigma \ac{ECS}, separando entre entidades, componentes y sistemas. Las entidades son los objetos que se representan en el entorno tridimensional, los componentes son las propiedades de estas entidades, y los sistemas son las funciones que se aplican a estas entidades. Este paradigma permite una gran flexibilidad y escalabilidad, lo que lo hace ideal para este tipo de proyectos \autocite{prdevingDeepdivingEntityComponent2023}.
 
-Se muestra en la \autoref{fig:entorno3D} una imagen del entorno tridimensional creado con Bevy, antes de cargar el \ac{C3D}.
+Se muestra en la \autoref{fig:entorno3D} una imagen del entorno tridimensional creado con \textit{Bevy}, antes de cargar el fichero de datos en formato \ac{C3D}.
 
 
 \begin{figure}[H]
@@ -68,7 +68,7 @@ Se muestra en la \autoref{fig:entorno3D} una imagen del entorno tridimensional c
   \label{fig:entorno3D}
 \end{figure}
 
-En este entorno destacan el plano central, representado en un color verde oscuro, y sobre el que se apoyan 3 vectores que sirven como referencia. El código que genera estos vectores se incluye en el \autoref{apx:spawn_ref_vec}, demostrando la flexibilidad de \textit{Bevy} y el potencial de Rust. 
+En este entorno destacan el plano central, representado en un color verde oscuro, y, apoyándose sobre él, 3 vectores que sirven como referencia. El código que genera estos vectores se explica en el \autoref{apx:spawn_ref_vec}, demostrando la flexibilidad de \textit{Bevy} y el potencial de Rust. 
 
 El pequeño botón que aparece en la esquina superior izquierda permite cambiar el color de fondo, alternando entre un modo claro y un modo oscuro. En la \autoref{fig:modo_claro} se muestra el entorno en modo claro. Variar entre estos modos permite mejorar el contraste con los marcadores, y por tanto, mejorar la visibilidad de los mismos.
 
@@ -81,14 +81,14 @@ El pequeño botón que aparece en la esquina superior izquierda permite cambiar 
 
 \subsection{Configuración del entorno} \label{sec:bevy-configuracion}
 
-Al arrancar el programa, se genera un entorno tridimensional vacío, con un plano central, una cámara y una luz. El plano central es un plano de referencia que permite al usuario orientarse en el espacio tridimensional. Tiene un tamaño de 10x10 metros, y está representado en un color verde oscuro. El foco de luz se sitúa a tres metros por encima del plano, y tiene un color frío. La cámara se sitúa a 7 metros, enfocando al centro del plano. La cámara tiene un color de fondo oscuro, y cambiar entre modo claro y ocuro varía este color.
+El proyecto está configurado de manera que al arrancar el programa, se genera un entorno tridimensional vacío, con un plano central, una cámara y una luz. El plano central es un plano de referencia que permite al usuario orientarse en el espacio tridimensional. Tiene un tamaño de 10x10 metros, y está representado en un color verde oscuro. El foco de luz se sitúa a tres metros por encima del plano, y tiene un color frío. La cámara se sitúa a 7 metros, enfocando al centro del plano. La cámara tiene un color de fondo oscuro, y cambiar entre modo claro y oscuro varía este color.
 
 La implementación de la cámara no se basa en ningún \textit{crate} externo, sino que se ha implementado de manera manual para adaptarse al proyecto. Una cámara típicamente tiene tres variables que controlar, que son el \textit{yaw}, el \textit{pitch} y el \textit{roll}. El \textit{yaw} es la rotación de la cámara alrededor del eje vertical (Y), el \textit{pitch} es la rotación de la cámara alrededor del eje lateral (X), y el \textit{roll} es la rotación de la cámara alrededor del eje longitudinal (Z). En este caso, es necesario que el \textit{roll} sea cero, puesto que el entorno es un plano. Tanto el \textit{yaw} como el \textit{pitch} se pueden controlar pulsando el botón derecho del ratón y moviendo el ratón. Además, se puede controlar la posición de la cámara pulsando el botón izquierdo del ratón y moviendo el ratón. Esto permite al usuario moverse por el entorno tridimensional de manera intuitiva.
 
 
 \subsection{Información global} \label{sec:bevy-global}
 
-El programa almacena una serie de información a partir del \ac{C3D} cargado. Esta información se almacena en un \texttt{Resource}, que es una estructura de datos que permite gestionar y acceder a la información de manera eficiente. Esta estructura tiene el nombre de \texttt{AppState}, y contiene la información global necesaria para el funcionamiento del programa. Esta información incluye el \textit{frame} actual, el número de \textit{frames} del \ac{C3D}, el \textit{path} al fichero \ac{C3D}, el \textit{path} al fichero de configuración, la tasa de refresco del \ac{C3D}, la tasa de refresco seleccionada por el usuario, y diferentes booleanos que contienen información sobre el estado del programa, como si se está reproduciendo o no.
+El programa almacena una serie de información a partir del \ac{C3D} cargado. Esta información se almacena en un \texttt{Resource}, que es una estructura de datos interna, generada automáticamente al arrancar el programa, y que permite gestionar y acceder a la información de manera eficiente. Esta estructura tiene el nombre de \texttt{AppState}, y contiene la información global necesaria para el funcionamiento del programa, incluyendo el \textit{frame} actual, el número de \textit{frames} del \ac{C3D}, el \textit{path} al fichero \ac{C3D}, el \textit{path} al fichero de configuración, la tasa de refresco del \ac{C3D}, la tasa de refresco seleccionada por el usuario, y diferentes booleanos que contienen información sobre el estado del programa, como si se está reproduciendo o no.
 
 
 \subsection{Orientación a eventos} \label{sec:bevy-eventos}
@@ -165,7 +165,7 @@ Estos grupos son opcionales, y pueden aparecer en cualquier orden. En caso de no
 
 \subsection{Configuración básica}
 
-Una posible configuración podría ser la siguiente:
+Una posible configuración se muestra en el \autoref{lst:ajuste-simple}.
 
 \begin{lstlisting}[style=mystyle, caption={Ejemplo simple de un fichero de configuración}, label={lst:ajuste-simple}]
 [config1]
@@ -177,9 +177,13 @@ Una posible configuración podría ser la siguiente:
   ]
 \end{lstlisting}
 
-En el \autoref{lst:ajuste-simple} se muestra una configuración sencilla, \texttt{config1}, que representa los marcadores \ac{LFHD}, \ac{RFHD}, \ac{RBHD} y \ac{LBHD} como puntos visibles. Después, se define una unión entre los cuatro marcadores. Para representar un cuadrado, se duplica el primer marcador, \ac{LFHD}, al final de la lista. De este modo, se cierra la unión entre los cuatro marcadores. Además, se puede apreciar que en el grupo de uniones aparece un corchete extra. Esto se debe a que el grupo se considera una lista de listas. Las listas hijas representan diferentes uniones, es decir, grupos independientes de marcadores que se unen entre sí.
+En el fragmento anterior, se muestra una configuración sencilla, \texttt{config1}, que representa los marcadores \ac{LFHD}, \ac{RFHD}, \ac{RBHD} y \ac{LBHD} como puntos visibles. Después, se define una unión entre los cuatro marcadores. Para representar un cuadrado, se duplica el primer marcador, \ac{LFHD}, al final de la lista. De este modo, se cierra la unión entre los cuatro marcadores. Además, se puede apreciar que en el grupo de uniones aparece un corchete extra. Esto se debe a que el grupo se considera una lista de listas. Las listas hijas representan diferentes uniones, es decir, grupos independientes de marcadores que se unen entre sí.
 
-Estos cuatro marcadores representan los puntos de la cabeza. Es una combinación muy común, que posiblemente se utilice en varias configuraciones. Para facilitar su uso, el fichero de configuración permite definir un grupo de marcadores como un alias. De este modo, se puede definir el grupo de marcadores de la cabeza como \texttt{head}, y usarlo en la configuración de la siguiente manera:
+Estos cuatro marcadores representan los puntos de la cabeza. Es una combinación muy común, que posiblemente se utilice en varias configuraciones. Para facilitar su uso, el fichero de configuración permite definir un grupo de marcadores como un alias. De este modo, se puede definir el grupo de marcadores de la cabeza como \texttt{head}, y usarlo de la manera definida en el \autoref{lst:grupos-puntos}, donde se muestra un ejemplo de cómo definir grupos de puntos, mediante la palabra reservada \textit{point\_groups}. En este caso, se definen dos grupos, \texttt{head} y \texttt{shoulders}. La forma de indicar al programa que se está referenciando a un grupo de puntos en vez de a un marcador es envolviendo al nombre entre corchetes.
+
+En la configuración \texttt{config1}, se representa el grupo de la cabeza como un punto visible y como una unión. Nótese que al usar el grupo de puntos de la cabeza, se está incluyendo dos veces el punto \ac{LFHD}. Esto no es relevante, dado que internamente el programa trata este punto como uno solo, al usarse como clave de un \textit{Hashmap}, que no permite la duplicación de elementos. En la configuración \texttt{config2}, se representan ambos grupos como puntos visibles y como uniones independientes. 
+
+\newpage
 
 \begin{lstlisting}[style=mystyle, caption={Ejemplo de un grupo de puntos}, label={lst:grupos-puntos}]
 [point_groups]
@@ -203,13 +207,11 @@ Estos cuatro marcadores representan los puntos de la cabeza. Es una combinación
   ]
 \end{lstlisting}
 
-En el \autoref{lst:grupos-puntos} se muestra un ejemplo de cómo definir grupos de puntos, mediante la palabra reservada \textit{point\_groups}. En este caso, se definen dos grupos, \texttt{head} y \texttt{shoulders}. La forma de indicar al programa que se está referenciando a un grupo de puntos en vez de a un marcador es envolviendo al nombre entre corchetes.
-
-En este caso, en la configuración \texttt{config1}, se representa el grupo de la cabeza como un punto visible y como una unión\footnote{Nótese que al usar el grupo de puntos de la cabeza, se está incluyendo dos veces el punto \ac{LFHD}. Esto no es relevante, dado que internamente el programa trata este punto como uno solo, al usarse como clave de un \textit{Hashmap}, que no permite la duplicación de elementos.}. En la configuración \texttt{config2}, se representan ambos grupos como puntos visibles y como uniones independientes. 
-
 \subsection{Personalización general: Color y tamaño}
 
 El fichero de configuración permite personalizar la representación de los marcadores. Para ello, se definen una serie de palabras reservadas. Estas palabras son \texttt{point\_color}, \texttt{point\_size}, \texttt{join\_color} y \texttt{line\_thickness}. Estas palabras son opcionales, y permiten personalizar la representación de los marcadores y las uniones. Los colores se pueden definir en formato rgb, como una lista de tres números enteros entre 0 y 255, o como rgb con transparencia, como una lista de cuatro números enteros entre 0 y 255.
+
+En el \autoref{lst:cfg-personalizada} se muestra un ejemplo de la personalización de una configuración, sobreescribiendo los valores por defecto. En este caso, para la configuración \texttt{config1}, los marcadores se representan en rojo, y las uniones en verde. Cada línea se representa con el doble de grosor que el valor por defecto, y los marcadores tienen un tamaño 1.5 veces mayor que el valor por defecto. En la configuración \texttt{config2}, los marcadores se representan en azul, con un 40\% de transparencia, y el doble de tamaño que el valor por defecto. Las uniones no se personalizan, por lo que se usan los valores por defecto.
 
 \begin{lstlisting}[style=mystyle, caption={Configuración personalizada}, label={lst:cfg-personalizada}]
 [point_groups]
@@ -239,8 +241,6 @@ El fichero de configuración permite personalizar la representación de los marc
   point_color = [0, 0, 255, 100]
   point_size = 2.0
 \end{lstlisting}
-
-En el \autoref{lst:cfg-personalizada} se muestra un ejemplo de la personalización de una configuración, sobreescribiendo los valores por defecto. En este caso, para la configuración \texttt{config1}, los marcadores se representan en rojo, y las uniones en verde. Cada línea se representa con el doble de grosor que el valor por defecto, y los marcadores tienen un tamaño 1.5 veces mayor que el valor por defecto. En la configuración \texttt{config2}, los marcadores se representan en azul, con un 40\% de transparencia, y el doble de tamaño que el valor por defecto. Las uniones no se personalizan, por lo que se usan los valores por defecto.
 
 Lo visto en el \autoref{lst:cfg-personalizada} es un ejemplo de sobreescritura de los valores por defecto para cada configuración. Sin embargo, se puede lograr una personalización más extrema gracias a los grupos de puntos, a los que se les pueden aplicar las mismas palabras reservadas. De este modo, se pueden definir diferentes colores y tamaños para cada grupo de puntos. En el \autoref{lst:cfg-grupos-personalizados} se muestra un ejemplo de cómo personalizar los grupos de puntos:
 
@@ -282,7 +282,7 @@ Como se puede apreciar, se utiliza el nombre del grupo de puntos seguido de \tex
 
 \subsection{Personalización avanzada: Formas}
 
-Las uniones entre dos marcadores se generan por defecto mediante un cilindro delgado, con apariencia de una línea. Mediante la palabra reservada \texttt{line\_thickness} se puede modificar este comportamiento, pero adicionalemente se puede modificar la forma. Las otras figuras admitidas son: un cono, un semicono y un prisma rectangular.
+Las uniones entre dos marcadores se generan por defecto mediante un cilindro delgado, con apariencia de una línea. Mediante la palabra reservada \texttt{line\_thickness} se puede modificar este comportamiento, pero adicionalmente se puede modificar la forma. Las otras figuras admitidas son: un cono, un semicono y un prisma rectangular.
 
 \begin{lstlisting}[style=mystyle, caption={Uso de formas}, label={lst:cfg-formas}] 
 [config1]
@@ -333,7 +333,7 @@ Para evitar esto, el programa rodea el nombre del marcador con el símbolo \text
 
 \section{Carga de ficheros}
 
-El fichero de configuración y el fichero \ac{C3D} se cargan de forma simple, arrastrando el fichero a la ventana del programa. El programa detecta el tipo de fichero y lo carga automáticamente. Se puede variar el fichero \ac{C3D} o el fichero de configuración en tiempo de ejecución, y el programa lo detecta automáticamente.
+El fichero de configuración y el fichero \ac{C3D} se cargan de forma simple, arrastrándolo a la ventana del programa. El programa detecta el tipo de fichero y lo carga automáticamente. Se puede variar el fichero \ac{C3D} o el fichero de configuración en tiempo de ejecución, y el programa lo detecta automáticamente.
 
 \textit{Bevy} tiene una función nativa para la captura de los ficheros que se sueltan sobre la ventana. Sin embargo, en la versión web el navegador captura el fichero antes que \textit{Bevy}, por lo que es imposible la carga de ficheros de este modo. Para ello se ha modificado el crate \texttt{bevy\_web\_file\_drop} para darle compatibilidad con la versión 0.15 de \textit{Bevy}, dado que este \textit{crate} está escrito para la versión 0.14 y no presenta compatibilidad \autocite{Bevy_web_file_dropCratesioRust2024}.
 
