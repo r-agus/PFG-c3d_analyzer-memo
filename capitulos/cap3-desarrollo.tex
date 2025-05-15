@@ -358,7 +358,7 @@ Los marcadores se representan como esferas, y se pueden personalizar mediante el
 
 Es necesario mantener en memoria todos los marcadores, incluso los que no son visibles según el fichero de configuración. Esto se debe a que el programa permite cambiar la configuración en tiempo de ejecución, y por tanto, es necesario mantener todos los marcadores en memoria para poder representarlos. Sin embargo, el programa no los representa si no son visibles, gracias a que la estructura de datos contiene la visibilidad de cada marcador\footnote{\textit{Bevy} entiende la visibilidad de cualquier entidad como un enumerado, que puede ser visible, invisible o heredado \autocite{VisibilityBevyRender}.}.
 
-Si se ejecuta el programa sin un fichero de configuración, se representan todos los marcadores como visibles. Esto permite comprobar que el \textit{parser} de \ac{C3D} funciona correctamente, y que se están cargando todos los marcadores. Sin embargo, no se recomienda su uso, dado que el número de marcadores puede ser elevado, y la representación muestra datos que no tienen un sentido espacial. En la \autoref{fig:marcadores} se muestra una imagen de la representación de los marcadores sin un fichero de configuración. Se puede observar que el número de marcadores es elevado, y que aparecen marcadores que no tienen un sentido espacial, como un vector de velocidad. La \autoref{fig:marcadores} resalta la importancia de la configuración, puesto que es inviable el estudio de un movimiento con un número tan elevado de marcadores. 
+Si se ejecuta el programa sin un fichero de configuración, se representan todos los marcadores como visibles. Esto permite comprobar que el \textit{parser} de \ac{C3D} funciona correctamente, y que se están cargando todos los marcadores. Sin embargo, no se recomienda su uso, dado que el número de marcadores puede ser elevado, y la representación muestra datos que no tienen un sentido espacial. En la \autoref{fig:marcadores} se muestra una imagen de la representación de los marcadores sin un fichero de configuración. Se puede observar que el número de marcadores es elevado, y que aparecen marcadores que no tienen un sentido espacial, como los vectores de velocidad. Por tanto, en la figura se resalta la importancia de la configuración, puesto que es inviable el estudio de un movimiento con un número tan elevado de marcadores. 
 
 \begin{figure}[H]
   \centering
@@ -367,7 +367,7 @@ Si se ejecuta el programa sin un fichero de configuración, se representan todos
   \label{fig:marcadores}
 \end{figure}
 
-Para representar los marcadores, el programa utiliza un componente de \textit{Bevy} llamado \texttt{Mesh}. Este componente permite representar una malla en el espacio tridimensional. En este caso, se utiliza una esfera como malla, con un tamaño y color definidos en el fichero de configuración, o en su defecto, en color azul y con un tamaño por defecto. Si se ha cargado un fichero de configuración, cada marcador se considera visible si aparece en el grupo de puntos visibles. En caso contrario, se considera invisible. De este modo, es sencillo representar solo una parte de los marcadores, y ocultar el resto.
+Para representar los marcadores, el programa utiliza un componente de \textit{Bevy} llamado \texttt{Mesh}\footnote{Un \textit{mesh} es la estructura tridimensional compuesta por vértices conectados mediante aristas y caras que define la forma geométrica de un objeto 3D, sobre la cual se pueden aplicar materiales y transformaciones para su representación gráfica.}. Este componente permite representar una malla en el espacio tridimensional. En este caso, se utiliza una esfera como malla, con un tamaño y color definidos en el fichero de configuración, o en su defecto, en color azul y con un tamaño por defecto. Si se ha cargado un fichero de configuración, cada marcador se considera visible si aparece en el grupo de puntos visibles. En caso contrario, se considera invisible. De este modo, es sencillo representar solo una parte de los marcadores, y ocultar el resto.
 
 \begin{figure}[H]
   \centering
@@ -422,9 +422,11 @@ Internamente, se trata a las uniones como una estructura de datos que contiene e
 
 \subsection{Representación de los vectores} \label{sec:representacion-vectores}
 
-Los vectores se representan como flechas que parten de un marcador, y tienen la dirección, módulo y sentido del vector, representado en el \ac{C3D} como otro marcador. Estos vectores se deben haber calculado previamente, mediante herramientas como \textit{BodyBuilder}.
+Los vectores se representan como flechas que parten de un marcador, y tienen la dirección, módulo y sentido del vector, representado en el \ac{C3D} como otro marcador. Estos vectores se deben haber calculado previamente, mediante herramientas como \textit{BodyBuilder}\footnote{\textit{BodyBuilder} es una herramienta de Vicon, basada en un lenguaje de scripting, que permite definir modelos cinemáticos y calcular variables biomecánicas a partir de los datos de marcadores capturados en sistemas de análisis de movimiento.}.
 
 Si tomamos como ejemplo un punto de anclaje \texttt{OBJ1}, y su vector de velocidad \texttt{LVelOBJ1}, el programa representa una flecha que parte de \texttt{OBJ1} y tiene la dirección, módulo y sentido del vector \texttt{LVelOBJ1}.
+
+En la \autoref{fig:vectores} se muestra un ejemplo de la representación de los vectores del \ac{C3D}. En este caso, se han representado dos vectores, \texttt{LVelOBJ2}, anclado a \texttt{OBJ2}\footnote{En el fichero \ac{C3D} que se utiliza como ejemplo en esta memoria, los marcadores que comienzan por \texttt{OBJ} representan un punto del palo de golf.} y \texttt{WThorax}, anclado a \texttt{Thorax}. El primero de ellos representa la velocidad de \texttt{OBJ2}, y el segundo representa la velocidad angular del \texttt{Thorax}.
 
 \begin{figure}[H]
   \centering
@@ -432,8 +434,6 @@ Si tomamos como ejemplo un punto de anclaje \texttt{OBJ1}, y su vector de veloci
   \caption{Representación de los vectores del \acs{C3D}}
   \label{fig:vectores}
 \end{figure}
-
-En la \autoref{fig:vectores} se muestra un ejemplo de la representación de los vectores del \ac{C3D}. En este caso, se han representado dos vectores, \texttt{LVelOBJ2}, anclado a \texttt{OBJ2} y \texttt{WThorax}, anclado a \texttt{Thorax}. El primero de ellos representa la velocidad de \texttt{OBJ2}, y el segundo representa la velocidad angular del \texttt{Thorax}.
 
 Un diagrama de actividad que explica el funcionamiento de la representación de los vectores se puede ver en la \autoref{fig:diag-vectores}.
 
