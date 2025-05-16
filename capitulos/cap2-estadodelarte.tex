@@ -7,6 +7,10 @@ Durante este capítulo se presenta el estado del arte de la tecnología de captu
 \section{Sistemas \textit{Motion Capture}}
 El \textit{Motion Capture} es una técnica que permite capturar el movimiento de un objeto en tiempo real, y representarlo en un entorno virtual. Esta técnica se utiliza en diferentes campos, como la animación, la medicina, la biomecánica o la robótica; y se basa en la captura de la posición de diferentes marcadores en el espacio. Para lograr la captura, existen diferentes tecnologías, como cámaras de vídeo, sensores inerciales, sensores de ultrasonidos, etc. \autocite{taiQueEsMotion2024}
 
+Este proyecto se enmarca en el ámbito del estudio del rendimiento humano y la prevención de lesiones, que se realiza desde varios enfoques, siendo uno de ellos el factor mecánico. El cuerpo es un sistema articulado movido a través de las fuerzas musculares, articulares, externas y gravedad y controlado por el sistema nervioso. Por consiguiente, uno de los procedimientos necesarios es el análisis biomecánico. No existen técnicas instrumentales que sean totalmente precisas ni totalmente inocuas para el movimiento. Según los propósitos de la investigación, se dará más importancia a un tipo de validez u a otra. En ocasiones se utilizan técnicas muy válidas y precisas en condiciones poco reales en condiciones de laboratorio y con cierta falta de validez externa y en otras, por el contrario, el investigador prefiere utilizar técnicas menos precisas que puedan carecer de validez interna, pero que permiten registrar el movimiento en situaciones reales como es un sujeto caminado por la calle, durante una actividad deportiva o realizando una tarea laboral.
+
+Los sistemas de análisis biomecánico basados en imágenes se fundamentan en la técnica denominada Fotogrametría. La Fotogrametría estudia la forma y movimiento de los cuerpos a partir de imágenes tomadas mediante sistemas tales como la fotografía, el vídeo, los rayos X, la Resonancia Magnética Nuclear, la Tomografía axial computarizada o los Ultrasonidos. La fotogrametría permite la obtención de las coordenadas 3D de un punto a partir de las coordenadas 2D del punto proyectadas en dos o más planos.
+
 \subsection{\textit{Hardware} disponible}
 En la facultad de \ac{INEF} de la \ac{UPM}, se utiliza un sistema de Motion Capture basado en cámaras de infrarrojo, que utilizan para capturar movimientos deportivos\footnote{La facultad de INEF cuenta con 6 cámaras infrarrojas de la marca Vicon, capaces de capturar fotogramas a una frecuencia de hasta 500 \ac{Hz} \autocite{FacultadCienciasActividad}}. Estos marcadores se colocan en diferentes partes del cuerpo del deportista, logrando capturar un movimiento preciso. Los datos capturados se almacenan en un fichero en formato \ac{C3D}, que contiene la información necesaria para la representación del movimiento.
 
@@ -44,7 +48,7 @@ Es importante señalar que el formato \ac{C3D} contiene información de objetos 
 
 Existen diferentes \textit{parsers} que permiten la lectura de estos ficheros, y la extracción de la información necesaria para la representación del movimiento. En este proyecto se ha modificado el \textit{crate} \texttt{c3dio}, que permite la lectura de ficheros \ac{C3D} en Rust, y tiene un \textit{plugin} para \texttt{Bevy} que facilita la integración con el motor de videojuegos, que se explica en el \autoref{subsec:bevy}. Adicionalmente, con la herramienta explicada en el \autoref{apx:c3d_latex_py}, se puede convertir un fragmento de un fichero \ac{C3D} a un formato leíble por humanos. Se muestra en la \autoref{tab:c3d_data} un fragmento de un fichero \ac{C3D} utilizado durante el desarrollo de la aplicación, que contiene información sobre los primeros diez fotogramas de la captura de movimiento, para dos marcadores, \ac{RFIN} y \ac{RFRA}.
 
-\begin{table}[htbp]
+\begin{table}[H]
     \centering
     \caption{Fragmento de un fichero \acs{C3D} convertido a tabla}
     \setlength{\tabcolsep}{5pt}
@@ -159,6 +163,8 @@ Valorando las diferentes opciones, se ha decidido utilizar Rust para el desarrol
 Los ficheros \ac{C3D} que este proyecto pretende representar pueden tener un número muy elevado de marcadores, superando ampliamente el millar. Representar una cantidad muy elevada de marcadores en el entorno es contraproducente, pues no permite focalizar en los puntos que se pretende estudiar. Por tanto, es importante generar una configuración que permita seleccionar los marcadores de interés.
 
 Vicon cuenta con un formato propietario para definir configuraciones que su aplicación de representación de movimiento utiliza. En el \autoref{lst:mkr} se muestra un fragmento de este tipo de ficheros, (formato MKR), que presenta una única configuración de marcadores, llamada \texttt{Autolabel}.
+
+\newpage
 
 \begin{lstlisting}[style=mystyle, caption={Fragmento de un fichero MKR}, label=lst:mkr]
 !MKR#2
